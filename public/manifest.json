@@ -1,0 +1,13 @@
+{
+  "name": "Eleven Logs",
+  "short_name": "Eleven Logs",
+  "description": "Le foot, loggé match par match.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0A0B0D",
+  "theme_color": "#0A0B0D",
+  "icons": [
+    { "src": "/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "/apple-touch-icon.png", "sizes": "180x180", "type": "image/png" }
+  ]
+}

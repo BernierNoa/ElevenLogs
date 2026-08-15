@@ -1,0 +1,383 @@
+@import "tailwindcss";
+
+@theme {
+  /* ---- Couleurs (Eleven Logs — DA v0.1) ---- */
+  --color-noir: #0a0b0d;
+  --color-nuit: #101316;
+  --color-nuit-haute: #171b1f;
+  --color-ligne: #232a2e;
+  --color-pelouse: #0c3b24;
+  --color-projecteur: #1fe07a;
+  --color-projecteur-fonce: #12a85c;
+  --color-motm-gold: #e5b44b;
+  --color-craie: #edf2ef;
+  --color-gris: #7e8b85;
+  --color-gris-fonce: #4a5450;
+  --color-carton: #ff5c4d;
+
+  /* ---- Polices ---- */
+  --font-display: "Archivo", system-ui, sans-serif;
+  --font-body: "Instrument Sans", system-ui, sans-serif;
+  --font-data: "JetBrains Mono", ui-monospace, monospace;
+
+  /* ---- Rayons ---- */
+  --radius-s: 6px;
+  --radius-m: 10px;
+  --radius-l: 16px;
+  --radius-xl: 26px;
+}
+
+@layer base {
+  *,
+  *::before,
+  *::after {
+    box-sizing: border-box;
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    background: var(--color-noir);
+    color: var(--color-craie);
+    font-family: var(--font-body);
+    font-size: 15px;
+    line-height: 1.55;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--color-projecteur);
+    outline-offset: 3px;
+    border-radius: 4px;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation: none !important;
+      transition: none !important;
+    }
+  }
+}
+
+@layer utilities {
+  /* Chiffres tabulaires — obligatoire sur scores, notes, reps, timers */
+  .chiffres {
+    font-variant-numeric: tabular-nums;
+  }
+}
+
+@layer components {
+  /* ============ BOUTONS ============ */
+  .btn {
+    font-family: var(--font-body);
+    font-weight: 600;
+    font-size: 14.5px;
+    border: 1px solid transparent;
+    border-radius: var(--radius-m);
+    padding: 12px 20px;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 9px;
+    transition:
+      transform 0.12s ease,
+      background 0.16s ease,
+      border-color 0.16s ease,
+      color 0.16s ease;
+    line-height: 1;
+    min-height: 44px;
+  }
+  .btn:active {
+    transform: translateY(1px);
+  }
+  .btn:disabled {
+    opacity: 0.32;
+    cursor: not-allowed;
+    transform: none;
+  }
+
+  .btn-primaire {
+    background: var(--color-projecteur);
+    color: #04120a;
+  }
+  .btn-primaire:hover:not(:disabled) {
+    background: #3beb90;
+  }
+
+  .btn-secondaire {
+    background: var(--color-nuit-haute);
+    color: var(--color-craie);
+    border-color: var(--color-ligne);
+  }
+  .btn-secondaire:hover:not(:disabled) {
+    border-color: var(--color-projecteur-fonce);
+    color: var(--color-projecteur);
+  }
+
+  .btn-discret {
+    background: transparent;
+    color: var(--color-gris);
+  }
+  .btn-discret:hover:not(:disabled) {
+    color: var(--color-craie);
+    background: var(--color-nuit-haute);
+  }
+
+  .btn-destructif {
+    background: transparent;
+    color: var(--color-carton);
+    border-color: rgba(255, 92, 77, 0.35);
+  }
+  .btn-destructif:hover:not(:disabled) {
+    background: rgba(255, 92, 77, 0.1);
+  }
+
+  .btn-dore {
+    background: var(--color-motm-gold);
+    color: #231703;
+  }
+  .btn-dore:hover:not(:disabled) {
+    background: #f0c361;
+  }
+
+  .btn-sm {
+    padding: 8px 14px;
+    font-size: 13px;
+    min-height: 36px;
+    border-radius: var(--radius-s);
+  }
+
+  .btn-icone {
+    padding: 0;
+    width: 44px;
+    height: 44px;
+    justify-content: center;
+  }
+
+  .btn-spin {
+    width: 15px;
+    height: 15px;
+    border: 2px solid rgba(4, 18, 10, 0.3);
+    border-top-color: #04120a;
+    border-radius: 50%;
+    animation: btn-spin-rotate 0.7s linear infinite;
+  }
+  @keyframes btn-spin-rotate {
+    to {
+      transform: rotate(360deg);
+    }
+  }
+
+  /* ============ BADGES ============ */
+  .badge {
+    font-family: var(--font-data);
+    font-size: 10.5px;
+    font-weight: 700;
+    letter-spacing: 0.11em;
+    text-transform: uppercase;
+    padding: 5px 10px;
+    border-radius: 100px;
+    border: 1px solid var(--color-ligne);
+    color: var(--color-gris);
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .badge-live {
+    border-color: rgba(255, 92, 77, 0.45);
+    color: var(--color-carton);
+    background: rgba(255, 92, 77, 0.08);
+  }
+  .badge-live .badge-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--color-carton);
+    animation: badge-pulse 1.6s ease-in-out infinite;
+  }
+  @keyframes badge-pulse {
+    50% {
+      opacity: 0.3;
+    }
+  }
+  .badge-logged {
+    border-color: var(--color-projecteur-fonce);
+    color: var(--color-projecteur);
+    background: rgba(31, 224, 122, 0.09);
+  }
+  .badge-motm {
+    /* rgba ci-dessous = --color-motm-gold (229,180,75) à opacité réduite */
+    border-color: rgba(229, 180, 75, 0.5);
+    color: var(--color-motm-gold);
+    background: rgba(229, 180, 75, 0.09);
+  }
+  .badge-comp {
+    border-color: var(--color-ligne);
+    color: var(--color-gris);
+  }
+  /* Même teinte que badge-live (carton), sans le point animé : sévérité
+   * distinguée par le texte ("Banni"/"Suspendu"), pas par une nouvelle
+   * couleur — usage admin (statut de compte, actions destructives). */
+  .badge-danger {
+    border-color: rgba(255, 92, 77, 0.45);
+    color: var(--color-carton);
+    background: rgba(255, 92, 77, 0.08);
+  }
+
+  /* ============ CHAMPS ============ */
+  .champ-label {
+    display: block;
+    font-family: var(--font-data);
+    font-size: 10.5px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--color-gris);
+    margin-bottom: 8px;
+  }
+  .champ-input,
+  .champ-area {
+    width: 100%;
+    background: var(--color-nuit);
+    border: 1px solid var(--color-ligne);
+    border-radius: var(--radius-m);
+    padding: 13px 15px;
+    color: var(--color-craie);
+    font-family: var(--font-body);
+    font-size: 15px;
+    transition: border-color 0.15s ease;
+  }
+  .champ-input::placeholder,
+  .champ-area::placeholder {
+    color: var(--color-gris-fonce);
+  }
+  .champ-input:focus,
+  .champ-area:focus {
+    border-color: var(--color-projecteur);
+    outline: none;
+  }
+  .champ-area {
+    resize: vertical;
+    min-height: 88px;
+    line-height: 1.5;
+  }
+  .champ-aide {
+    font-size: 12px;
+    color: var(--color-gris-fonce);
+    margin-top: 7px;
+  }
+
+  /* ============ CARTE ============ */
+  .carte {
+    background: var(--color-nuit);
+    border: 1px solid var(--color-ligne);
+    border-radius: var(--radius-l);
+    padding: 18px;
+    transition: border-color 0.16s ease;
+  }
+  .carte:hover {
+    border-color: var(--color-gris-fonce);
+  }
+  .carte-loggee {
+    border-left: 3px solid var(--color-projecteur);
+  }
+  /* Match en direct : léger halo pelouse/projecteur qui respire, pas un
+   * clignotement — la seule autre animation en continu de l'app est le point
+   * du badge "live" (badge-pulse), volontairement plus discret ici. */
+  .carte-live {
+    border-color: var(--color-projecteur-fonce);
+    animation: carte-live-pulse 2.6s ease-in-out infinite;
+  }
+  @keyframes carte-live-pulse {
+    0%,
+    100% {
+      box-shadow: 0 0 0 rgba(31, 224, 122, 0);
+    }
+    50% {
+      box-shadow: 0 0 18px rgba(31, 224, 122, 0.22);
+    }
+  }
+  .quote {
+    font-size: 13.5px;
+    color: #b6c4bc;
+    font-style: italic;
+    line-height: 1.5;
+    padding-left: 12px;
+    border-left: 2px solid var(--color-ligne);
+  }
+
+  /* ============ CHIPS DE FILTRE ============ */
+  .filtre-chip {
+    font-family: var(--font-data);
+    font-size: 10.5px;
+    letter-spacing: 0.09em;
+    text-transform: uppercase;
+    padding: 6px 12px;
+    border-radius: 100px;
+    border: 1px solid var(--color-ligne);
+    background: none;
+    color: var(--color-gris);
+    cursor: pointer;
+    transition: all 0.14s ease;
+    min-height: 32px;
+  }
+  .filtre-chip:hover {
+    border-color: var(--color-gris-fonce);
+    color: var(--color-craie);
+  }
+  .filtre-chip.actif {
+    background: var(--color-projecteur);
+    border-color: var(--color-projecteur);
+    color: #04120a;
+    font-weight: 700;
+  }
+
+  /* ============ NAVIGATION (tab bar / sidebar) ============ */
+  .nav-tab {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--color-gris-fonce);
+    background: none;
+    border: none;
+    cursor: pointer;
+    min-height: 44px;
+    transition: color 0.14s ease;
+  }
+  .nav-tab.actif {
+    color: var(--color-projecteur);
+  }
+
+  .nav-lateral-item {
+    display: flex;
+    align-items: center;
+    gap: 11px;
+    padding: 9px 10px;
+    border-radius: var(--radius-s);
+    color: var(--color-gris);
+    font-size: 14px;
+    font-weight: 500;
+    background: none;
+    border: none;
+    cursor: pointer;
+    width: 100%;
+    text-align: left;
+    border-left: 2px solid transparent;
+    transition:
+      color 0.14s ease,
+      background 0.14s ease;
+  }
+  .nav-lateral-item:hover {
+    color: var(--color-craie);
+    background: var(--color-nuit-haute);
+  }
+  .nav-lateral-item.actif {
+    color: var(--color-projecteur);
+    background: rgba(31, 224, 122, 0.08);
+    border-left-color: var(--color-projecteur);
+  }
+}

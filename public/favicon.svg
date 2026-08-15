@@ -1,0 +1,39 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 260 282" width="260" height="282">
+  <defs>
+    <path id="digitShape" d="M140,0 L65,0 L0,80 L65,130 L65,260 L140,260 Z"/>
+    <clipPath id="clip1"><use href="#digitShape"/></clipPath>
+    <clipPath id="clip2"><use href="#digitShape"/></clipPath>
+  </defs>
+
+  <!-- Digit 1 -->
+  <g transform="translate(20,20) scale(0.9)">
+    <use href="#digitShape" transform="translate(-11,9)" fill="#0e5c34"/>
+    <use href="#digitShape" fill="#38d97a"/>
+    <g clip-path="url(#clip1)">
+      <g stroke="#0d3d22" stroke-width="15" opacity="0.95">
+        <line x1="-60" y1="-50" x2="240" y2="250"/>
+        <line x1="-15" y1="-50" x2="285" y2="250"/>
+        <line x1="30" y1="-50" x2="330" y2="250"/>
+        <line x1="75" y1="-50" x2="375" y2="250"/>
+        <line x1="120" y1="-50" x2="420" y2="250"/>
+        <line x1="165" y1="-50" x2="465" y2="250"/>
+      </g>
+    </g>
+  </g>
+
+  <!-- Digit 2 -->
+  <g transform="translate(110.7,20) scale(0.9)">
+    <use href="#digitShape" transform="translate(-11,9)" fill="#0e5c34"/>
+    <use href="#digitShape" fill="#38d97a"/>
+    <g clip-path="url(#clip2)">
+      <g stroke="#0d3d22" stroke-width="15" opacity="0.95">
+        <line x1="-60" y1="-50" x2="240" y2="250"/>
+        <line x1="-15" y1="-50" x2="285" y2="250"/>
+        <line x1="30" y1="-50" x2="330" y2="250"/>
+        <line x1="75" y1="-50" x2="375" y2="250"/>
+        <line x1="120" y1="-50" x2="420" y2="250"/>
+        <line x1="165" y1="-50" x2="465" y2="250"/>
+      </g>
+    </g>
+  </g>
+</svg>
