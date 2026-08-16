@@ -113,6 +113,10 @@ export function useSaveLog() {
 
     onSuccess: (result) => {
       if (result.queued) {
+        // Même en mode "queued" (échec réseau/insert), on veut que toutes
+        // les pages (Journal + Stats) se re-synchronisent avec la source de
+        // vérité (IndexedDB pending via useMyLogs).
+        queryClient.invalidateQueries({ queryKey: myLogsKey });
         queryClient.invalidateQueries({ queryKey: ["pending-logs-count", user?.id] });
         showToast("Log enregistré — sera synchronisé dès que possible");
       } else {
