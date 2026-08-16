@@ -64,6 +64,19 @@ export function useSaveLog() {
         .upsert(row, { onConflict: "user_id,match_id" });
 
       if (error) {
+        // Sans ce log, un échec permanent (RLS, contrainte, colonne trop
+        // étroite...) est indiscernable d'une simple coupure réseau : les
+        // deux finissent en queue "sera synchronisé", et le premier n'aboutit
+        // jamais sans que personne ne sache pourquoi.
+        console.error("[useSaveLog] upsert échoué, mise en attente locale :", {
+          code: error.code,
+          message: error.message,
+          details: error.details,
+          hint: error.hint,
+          userId: user.id,
+          matchId: input.matchId,
+          rating: input.rating,
+        });
         await addPendingLog({
           userId: user.id,
           matchId: input.matchId,

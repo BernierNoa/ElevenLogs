@@ -39,7 +39,15 @@ export function OfflineSyncManager() {
         .eq("user_id", entry.userId)
         .maybeSingle();
 
-      if (selectError) return false;
+      if (selectError) {
+        console.error("[OfflineSyncManager] vérification d'existence échouée :", {
+          code: selectError.code,
+          message: selectError.message,
+          userId: entry.userId,
+          matchId: entry.matchId,
+        });
+        return false;
+      }
 
       if (existing) {
         await removePendingLog(entry.localId);
@@ -55,7 +63,22 @@ export function OfflineSyncManager() {
         watched_at: entry.watchedAt,
       });
 
-      if (insertError) return false;
+      if (insertError) {
+        // Le champ le plus utile pour distinguer "réessaiera tout seul" (blip
+        // réseau) de "restera bloqué pour toujours" (RLS, contrainte...) :
+        // sans ce log, les deux ressemblent exactement au même échec muet.
+        console.error("[OfflineSyncManager] insertion échouée :", {
+          code: insertError.code,
+          message: insertError.message,
+          details: insertError.details,
+          hint: insertError.hint,
+          userId: entry.userId,
+          matchId: entry.matchId,
+          rating: entry.rating,
+          attemptCount: entry.attemptCount ?? 0,
+        });
+        return false;
+      }
 
       await removePendingLog(entry.localId);
       return true;
@@ -77,6 +100,9 @@ export function OfflineSyncManager() {
         // courant), et ferait échouer/bloquer la synchro des entrées
         // suivantes qui appartiennent réellement à l'utilisateur courant.
         const pending = await getPendingLogsForUser(user!.id);
+        console.debug(
+          `[OfflineSyncManager] sync(force=${force}) — ${pending.length} entrée(s) en attente pour ${user!.id}`,
+        );
         let syncedAny = false;
 
         for (const entry of pending) {

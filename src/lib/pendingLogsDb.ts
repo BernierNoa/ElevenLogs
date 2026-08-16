@@ -62,6 +62,12 @@ export async function addPendingLog(
     lastErrorAt: null,
   };
   await db.put("pending_logs", pending);
+  console.debug("[pendingLogsDb] addPendingLog", {
+    localId: pending.localId,
+    userId: pending.userId,
+    matchId: pending.matchId,
+    replacedExisting: !!existing,
+  });
   return pending;
 }
 

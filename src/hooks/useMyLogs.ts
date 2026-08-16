@@ -65,6 +65,10 @@ export function useMyLogs() {
         });
       }
 
+      console.debug(
+        `[useMyLogs] ${data?.length ?? 0} log(s) en base, ${pending.length} en attente (IndexedDB), ${logs.size} au total pour ${user.id}`,
+      );
+
       return logs;
     },
   });
