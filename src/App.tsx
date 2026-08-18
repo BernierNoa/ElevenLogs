@@ -1,5 +1,5 @@
 import { Route, Routes, Link } from "react-router";
-import { SignIn, SignUp } from "@clerk/react-router";
+import { SignIn } from "@clerk/react-router";
 import { AppLayout } from "./layouts/AppLayout";
 import { Home } from "./pages/Home";
 import { Matches } from "./pages/Matches";
@@ -14,6 +14,7 @@ import { CGU } from "./pages/legal/CGU";
 import { PolitiqueConfidentialite } from "./pages/legal/PolitiqueConfidentialite";
 import { NotFound } from "./pages/NotFound";
 import { Admin } from "./pages/Admin";
+import { SignUpPage } from "./pages/SignUp";
 
 function AuthLegalLinks() {
   return (
@@ -62,10 +63,7 @@ export default function App() {
       <Route
         path="/inscription/*"
         element={
-          <div className="min-h-screen flex flex-col items-center justify-center bg-noir px-5 gap-5">
-            <SignUp routing="path" path="/inscription" signInUrl="/connexion" />
-            <AuthLegalLinks />
-          </div>
+          <SignUpPage />
         }
       />
     </Routes>
