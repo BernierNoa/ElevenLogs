@@ -1,7 +1,8 @@
 User-agent: *
 
-# Eleven Logs est une application (SPA). On autorise l’indexation
-# des pages publiques et des pages légales.
+# Eleven Logs est une SPA. On autorise l’indexation des pages publiques
+# et des pages légales, et on désactive l’indexation des pages nécessitant
+# une connexion (car elles sont vides côté crawlers sans JS/auth).
 
 Allow: /
 
@@ -9,13 +10,13 @@ Disallow: /connexion
 Disallow: /inscription
 Disallow: /admin
 
-# Données personnelles (nécessite login)
+# Contenu perso / nécessitant login
 Disallow: /journal
 Disallow: /stats
 Disallow: /activite
 Disallow: /profil/
 
-# Profils publics (RLS + visibilité) : autorisés
+# Profils publics
 Allow: /u/
 
 Sitemap: https://elevenlogs.app/sitemap.xml
