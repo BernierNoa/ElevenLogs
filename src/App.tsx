@@ -1,5 +1,4 @@
-import { Route, Routes, Link } from "react-router";
-import { SignIn } from "@clerk/react-router";
+import { Route, Routes } from "react-router";
 import { AppLayout } from "./layouts/AppLayout";
 import { Home } from "./pages/Home";
 import { Matches } from "./pages/Matches";
@@ -15,22 +14,7 @@ import { PolitiqueConfidentialite } from "./pages/legal/PolitiqueConfidentialite
 import { NotFound } from "./pages/NotFound";
 import { Admin } from "./pages/Admin";
 import { SignUpPage } from "./pages/SignUp";
-
-function AuthLegalLinks() {
-  return (
-    <p className="text-gris-fonce text-[11.5px] text-center max-w-[320px]">
-      En continuant, tu acceptes les{" "}
-      <Link to="/cgu" className="text-projecteur">
-        CGU
-      </Link>{" "}
-      et la{" "}
-      <Link to="/confidentialite" className="text-projecteur">
-        politique de confidentialité
-      </Link>{" "}
-      d'Eleven Logs.
-    </p>
-  );
-}
+import { Connexion } from "./pages/Connexion";
 
 export default function App() {
   return (
@@ -54,10 +38,7 @@ export default function App() {
       <Route
         path="/connexion/*"
         element={
-          <div className="min-h-screen flex flex-col items-center justify-center bg-noir px-5 gap-5">
-            <SignIn routing="path" path="/connexion" signUpUrl="/inscription" />
-            <AuthLegalLinks />
-          </div>
+          <Connexion />
         }
       />
       <Route
