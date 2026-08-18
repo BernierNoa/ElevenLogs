@@ -122,15 +122,24 @@ export function Journal() {
         <p className="text-gris-fonce text-[13px] mt-8">Chargement…</p>
       )}
 
-      {isSignedIn && !isLoading && !hasError && loggedMatches.length === 0 && (
-        <p className="text-gris text-[13.5px] mt-2 max-w-[62ch]">
-          Aucun log pour l'instant. Va sur{" "}
-          <a href="/matchs" className="text-projecteur">
-            la liste des matchs
-          </a>{" "}
-          pour noter le premier.
-        </p>
-      )}
+      {isSignedIn &&
+        !isLoading &&
+        !hasError &&
+        loggedMatches.length === 0 &&
+        customLogs?.length === 0 && (
+          <div className="carte p-5 mt-6">
+            <div className="font-display font-bold text-[15px]">
+              Ton journal est vide
+            </div>
+            <p className="text-gris-fonce text-[13px] mt-1 max-w-[52ch]">
+              Note ton premier match : une note sur 10, un homme du match si
+              tu veux, et c'est parti.
+            </p>
+            <Button onClick={() => navigate("/matchs")} className="mt-4">
+              Voir les matchs
+            </Button>
+          </div>
+        )}
 
       {isSignedIn && loggedMatches.length > 0 && (
         <div className="mt-7">

@@ -8,6 +8,7 @@ import { ActivityFeedCustomLogItem } from "../components/ActivityFeedCustomLogIt
 import { StreakBanner } from "../components/home/StreakBanner";
 import { MonthStatsPanel } from "../components/home/MonthStatsPanel";
 import { MatchAgenda } from "../components/home/MatchAgenda";
+import { SuggestedAccounts } from "../components/home/SuggestedAccounts";
 import { LandingHero } from "../components/landing/LandingHero";
 import { LandingFlowDemo } from "../components/landing/LandingFlowDemo";
 import { LandingActivityPreview } from "../components/landing/LandingActivityPreview";
@@ -22,6 +23,7 @@ import { useFollowMutations } from "../hooks/useFollowMutations";
 import { useActivityFeed } from "../hooks/useActivityFeed";
 import { useActivityFeedCustomLogs } from "../hooks/useActivityFeedCustomLogs";
 import { useDiscoveryFeed } from "../hooks/useDiscoveryFeed";
+import { useSuggestedAccounts } from "../hooks/useSuggestedAccounts";
 import { useLogLikes } from "../hooks/useLogLikes";
 import { useLikeMutations } from "../hooks/useLikeMutations";
 import { useCommentCounts } from "../hooks/useCommentCounts";
@@ -63,6 +65,7 @@ export function Home() {
   const feed = useActivityFeed(followedIds);
   const customFeed = useActivityFeedCustomLogs(followedIds);
   const discovery = useDiscoveryFeed(isSignedIn === true && !hasFollows);
+  const suggestedAccounts = useSuggestedAccounts(hasFollows ? undefined : user?.id);
   const previewEntries = (
     hasFollows
       ? mergeFeedEntries(feed.data?.pages[0] ?? [], customFeed.data ?? [])
@@ -151,6 +154,23 @@ export function Home() {
       <div className="mt-6">
         <StreakBanner streak={weeklyStreak} />
       </div>
+
+      {!hasFollows && (suggestedAccounts.data?.length ?? 0) > 0 && (
+        <div className="mt-8">
+          <div className="flex items-center gap-3.5 mb-3">
+            <h2 className="font-data text-[10.5px] tracking-[0.13em] uppercase text-gris-fonce">
+              Comptes à suivre
+            </h2>
+            <span className="flex-1 h-px bg-ligne" />
+          </div>
+          <SuggestedAccounts
+            accounts={suggestedAccounts.data ?? []}
+            isFollowing={(userId) => following?.has(userId) ?? false}
+            onToggleFollow={handleToggleFollow}
+            isFollowPending={isFollowTargetPending}
+          />
+        </div>
+      )}
 
       <div className="mt-8">
         <div className="flex items-center gap-3.5 mb-3">

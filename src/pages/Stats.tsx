@@ -52,13 +52,30 @@ export function Stats() {
     );
   }
 
+  const hasNoLogs = stats.matchsVus === 0 && stats.customLogsCount === 0;
+
   return (
     <div className="max-w-[1180px] mx-auto px-5 md:px-8 py-7">
       <h1 className="font-display font-extrabold uppercase tracking-[-0.03em] [font-stretch:110%] text-[28px] md:text-[30px]">
         Ta saison
       </h1>
 
-      {user && <SeasonStatsView stats={stats} logOwnerId={user.id} streak={streak} />}
+      {hasNoLogs ? (
+        <div className="carte p-5 mt-6">
+          <div className="font-display font-bold text-[15px]">
+            Rien à afficher pour l'instant
+          </div>
+          <p className="text-gris-fonce text-[13px] mt-1 max-w-[52ch]">
+            Tes statistiques (note moyenne, séries, classements) apparaissent
+            dès que tu as loggué au moins un match.
+          </p>
+          <Button onClick={() => navigate("/matchs")} className="mt-4">
+            Voir les matchs
+          </Button>
+        </div>
+      ) : (
+        user && <SeasonStatsView stats={stats} logOwnerId={user.id} streak={streak} />
+      )}
     </div>
   );
 }
