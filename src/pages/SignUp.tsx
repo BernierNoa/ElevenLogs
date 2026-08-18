@@ -7,7 +7,7 @@ export function SignUpPage() {
   const [accepted, setAccepted] = useState(false);
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center bg-noir px-5 gap-5">
+    <div className="min-h-screen flex flex-col items-center justify-center bg-noir px-5 py-6 gap-5">
       <div className="w-full max-w-[520px]">
         <div className="text-craie mb-6">
           <h1 className="font-display font-extrabold uppercase tracking-[-0.03em] text-[26px] mb-2">
@@ -19,7 +19,7 @@ export function SignUpPage() {
           </p>
         </div>
 
-        <div className="carte p-4 sm:p-6">
+        <div className="carte p-4 sm:p-6 max-h-[90vh] overflow-y-auto">
           <div className="flex items-start gap-3 mb-4">
             <div className="w-10 h-10 rounded-xl grid place-items-center bg-projecteur/10 border border-projecteur-fonce/50">
               <span className="text-projecteur font-display font-extrabold">EL</span>
