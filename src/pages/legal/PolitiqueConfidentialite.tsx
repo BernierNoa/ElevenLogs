@@ -8,7 +8,7 @@ export function PolitiqueConfidentialite() {
   return (
     <LegalLayout
       title="Politique de confidentialité"
-      updatedAt="24 juillet 2026"
+      updatedAt="18 août 2026"
     >
       <LegalDraftNotice />
 
@@ -28,15 +28,33 @@ export function PolitiqueConfidentialite() {
         </p>
         <p>
           <strong className="text-craie">Contenu que tu publies</strong> —
-          les matchs que tu notes (note sur 10, homme du match choisi,
-          commentaire facultatif), la date de visionnage, et le réglage de
-          visibilité (public/privé) que tu choisis pour chaque log et pour
-          ton profil.
+          les matchs que tu notes, y compris les matchs personnalisés que tu
+          crées toi-même (note sur 10, homme du match choisi, commentaire
+          facultatif), la date de visionnage, et le réglage de visibilité
+          (public/privé) que tu choisis pour chaque log et pour ton profil.
         </p>
         <p>
           <strong className="text-craie">Données sociales</strong> — les
           comptes que tu suis, ceux qui te suivent, les comptes que tu
-          bloques, et les signalements que tu effectues.
+          bloques, les signalements que tu effectues, ainsi que tes « j'aime »
+          et commentaires sur les avis d'autres utilisateurs.
+        </p>
+        <p>
+          <strong className="text-craie">Notifications push</strong> — si tu
+          actives les notifications, ton navigateur génère un abonnement
+          (une adresse technique et des clés de chiffrement) que nous
+          stockons pour pouvoir t'envoyer une notification ; il ne contient
+          aucune information personnelle en lui-même, et son envoi passe par
+          le service de notification de ton navigateur ou de ton système
+          d'exploitation (ex. Apple, Google, Mozilla). Tu peux désactiver
+          cette fonctionnalité à tout moment.
+        </p>
+        <p>
+          <strong className="text-craie">Données stockées sur ton appareil</strong>{" "}
+          — un log en cours d'enregistrement (par exemple hors connexion) est
+          d'abord gardé localement dans ton navigateur (IndexedDB) jusqu'à sa
+          synchronisation avec nos serveurs ; cette donnée locale n'est
+          jamais transmise à un tiers.
         </p>
         <p>
           <strong className="text-craie">Données techniques</strong> —
@@ -66,8 +84,13 @@ export function PolitiqueConfidentialite() {
             calcul des statistiques) — exécution du contrat.
           </li>
           <li>
+            Envoyer des notifications push — consentement, recueilli au
+            moment de l'activation ; révocable à tout moment.
+          </li>
+          <li>
             Assurer la sécurité du Service et la modération des contenus
-            signalés — intérêt légitime.
+            signalés, y compris la suspension ou le bannissement d'un compte
+            en cas de manquement aux CGU — intérêt légitime.
           </li>
           <li>
             Afficher les comparaisons communautaires et le fil d'activité, en
@@ -104,6 +127,15 @@ export function PolitiqueConfidentialite() {
             <strong className="text-craie">Oracle Corporation</strong>{" "}
             (hébergement du frontend) — États-Unis.
           </li>
+          <li>
+            <strong className="text-craie">
+              Service de notification push
+            </strong>{" "}
+            (Apple, Google ou Mozilla selon ton appareil et navigateur) —
+            uniquement si tu actives les notifications ; c'est ce service qui
+            achemine la notification jusqu'à ton appareil, nous ne
+            transmettons que le contenu du message.
+          </li>
         </ul>
         <p>
           Certains de ces prestataires étant situés hors de l'Union
@@ -118,7 +150,10 @@ export function PolitiqueConfidentialite() {
           Tes données sont conservées tant que ton compte est actif. En cas
           de suppression de ton compte, tes logs, tes relations de suivi et
           ton profil sont effacés ; les signalements que tu as émis peuvent
-          être conservés de façon anonymisée à des fins de modération.
+          être conservés de façon anonymisée à des fins de modération. Un
+          compte banni conserve une trace minimale (identifiant, motif,
+          date) le temps nécessaire à empêcher une réinscription
+          contournant la sanction.
         </p>
       </LegalSection>
 
@@ -135,9 +170,11 @@ export function PolitiqueConfidentialite() {
         <p>
           Conformément au RGPD, tu disposes d'un droit d'accès, de
           rectification, d'effacement, de limitation, d'opposition et de
-          portabilité sur tes données. Tu peux exercer ces droits en écrivant
-          à contact@elevenlogs.app, ou directement en supprimant ton compte
-          depuis ton profil.
+          portabilité sur tes données. Tu peux exercer ces droits, y compris
+          la suppression de ton compte, en écrivant à
+          contact@elevenlogs.app — une fonctionnalité de suppression
+          directement accessible depuis ton profil est prévue, elle
+          n'est pas encore disponible.
         </p>
         <p>
           Tu peux également introduire une réclamation auprès de la CNIL (3

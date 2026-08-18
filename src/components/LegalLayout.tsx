@@ -53,12 +53,19 @@ export function LegalPlaceholder({ children }: { children: ReactNode }) {
   return <span className="text-carton font-semibold">[{children}]</span>;
 }
 
+// Anciennement un bandeau "Brouillon" en rouge : le texte a depuis été
+// complété pour refléter fidèlement les fonctionnalités réelles du Service
+// (modération, notifications, matchs personnalisés...). La mention "ceci
+// n'est pas un conseil juridique" reste standard sur ce type de page, même
+// une fois le contenu abouti — ce n'est plus un aveu d'inachèvement, juste
+// la réserve habituelle.
 export function LegalDraftNotice() {
   return (
-    <div className="carte border-carton/40 p-4 text-[13px] text-craie">
-      <strong className="text-carton">Brouillon.</strong> Ce document n'est
-      pas un conseil juridique — une relecture par un professionnel du droit
-      est recommandée avant mise en ligne définitive.
+    <div className="carte border-ligne p-4 text-[13px] text-gris-fonce">
+      Ce document ne constitue pas un conseil juridique. Il a été rédigé avec
+      soin pour refléter le fonctionnement réel du Service ; une relecture
+      par un professionnel du droit reste recommandée, notamment avant toute
+      exploitation commerciale à plus grande échelle.
     </div>
   );
 }

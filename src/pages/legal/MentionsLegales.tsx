@@ -6,7 +6,7 @@ import {
 
 export function MentionsLegales() {
   return (
-    <LegalLayout title="Mentions légales" updatedAt="24 juillet 2026">
+    <LegalLayout title="Mentions légales" updatedAt="18 août 2026">
       <LegalDraftNotice />
 
       <LegalSection title="Éditeur du site">

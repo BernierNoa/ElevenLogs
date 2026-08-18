@@ -8,7 +8,7 @@ export function CGU() {
   return (
     <LegalLayout
       title="Conditions Générales d'Utilisation"
-      updatedAt="24 juillet 2026"
+      updatedAt="18 août 2026"
     >
       <LegalDraftNotice />
 
@@ -17,9 +17,12 @@ export function CGU() {
           Les présentes Conditions Générales d'Utilisation (« CGU ») régissent
           l'accès et l'utilisation du service Eleven Logs (« le Service »),
           qui permet à un utilisateur de noter les matchs de football qu'il a
-          regardés, d'élire un homme du match, de consulter ses statistiques
-          de saison, et de suivre l'activité d'autres utilisateurs. L'accès au
-          Service implique l'acceptation pleine et entière des présentes CGU.
+          regardés — y compris des matchs personnalisés ou des multiplex
+          absents du référentiel du Service —, d'élire un homme du match, de
+          consulter ses statistiques de saison, de suivre l'activité d'autres
+          utilisateurs et de partager ses avis, y compris sous forme d'image
+          générée pour les réseaux sociaux. L'accès au Service implique
+          l'acceptation pleine et entière des présentes CGU.
         </p>
       </LegalSection>
 
@@ -38,13 +41,16 @@ export function CGU() {
 
       <LegalSection title="3. Fonctionnement du Service">
         <p>
-          Pour chaque match, l'utilisateur peut enregistrer une note sur 10,
-          désigner un homme du match parmi les joueurs de la composition
-          quand elle est disponible, et ajouter un commentaire facultatif
-          (« un log »). Ces logs alimentent des statistiques personnelles
-          (moyenne, séries, classements par compétition/équipe/joueur) et,
-          selon leur visibilité, peuvent être comparés à la moyenne de la
-          communauté.
+          Pour chaque match, l'utilisateur peut enregistrer une note sur 10
+          (y compris en demi-points), désigner un homme du match parmi les
+          joueurs de la composition quand elle est disponible, et ajouter un
+          commentaire facultatif (« un log »). Lorsqu'un match ne figure pas
+          dans le référentiel du Service (rencontre amateur, multiplex de
+          plusieurs matchs suivis le même soir...), l'utilisateur peut créer
+          un « match personnalisé » en saisissant librement son intitulé.
+          Ces logs alimentent des statistiques personnelles (moyenne, séries,
+          classements par compétition/équipe/joueur) et, selon leur
+          visibilité, peuvent être comparés à la moyenne de la communauté.
         </p>
         <p>
           Chaque log est associé à un réglage de visibilité (public ou privé)
@@ -56,24 +62,33 @@ export function CGU() {
         </p>
         <p>
           Le Service propose une fonctionnalité de suivi entre comptes (sans
-          validation préalable du compte suivi) et un fil d'activité
-          affichant les logs récents des comptes suivis. Le nom et la photo
-          de profil d'un utilisateur restent visibles publiquement même si
-          son profil est réglé sur privé, afin de permettre la recherche et
-          le suivi de comptes.
+          validation préalable du compte suivi), un fil d'activité affichant
+          les logs récents des comptes suivis, ainsi que la possibilité
+          d'aimer et de commenter les avis visibles par l'utilisateur. Le nom
+          et la photo de profil d'un utilisateur restent visibles
+          publiquement même si son profil est réglé sur privé, afin de
+          permettre la recherche et le suivi de comptes.
+        </p>
+        <p>
+          Le Service peut, sous réserve de l'accord de l'utilisateur donné au
+          moment de l'activation, envoyer des notifications (nouvel abonné,
+          « j'aime » reçu...) sous forme de notification push directement sur
+          l'appareil de l'utilisateur. Cette fonctionnalité est facultative
+          et peut être désactivée à tout moment au niveau du navigateur ou du
+          système d'exploitation.
         </p>
       </LegalSection>
 
       <LegalSection title="4. Contenu utilisateur">
         <p>
-          L'utilisateur reste titulaire des droits sur les commentaires et
-          notes qu'il publie. En les publiant sur le Service, il accorde à
-          l'éditeur une licence non exclusive, gratuite et limitée à la
-          durée de conservation du contenu, permettant son affichage sur le
-          Service conformément au réglage de visibilité choisi (y compris
-          dans un fil d'activité, une comparaison communautaire agrégée, ou
-          une image générée pour être partagée par l'utilisateur lui-même en
-          dehors du Service).
+          L'utilisateur reste titulaire des droits sur les notes, commentaires
+          et matchs personnalisés qu'il publie. En les publiant sur le
+          Service, il accorde à l'éditeur une licence non exclusive, gratuite
+          et limitée à la durée de conservation du contenu, permettant son
+          affichage sur le Service conformément au réglage de visibilité
+          choisi (y compris dans un fil d'activité, une comparaison
+          communautaire agrégée, ou une image générée pour être partagée par
+          l'utilisateur lui-même en dehors du Service).
         </p>
         <p>
           L'utilisateur s'engage à ne publier aucun contenu illicite,
@@ -94,8 +109,13 @@ export function CGU() {
           publics, dans les deux sens.
         </p>
         <p>
-          L'éditeur se réserve le droit de retirer un contenu ou de suspendre
-          un compte en cas de manquement manifeste aux présentes CGU.
+          En cas de manquement aux présentes CGU, l'éditeur peut, de façon
+          proportionnée à la gravité des faits, retirer un contenu, suspendre
+          temporairement un compte pour une durée déterminée, ou le bannir
+          définitivement. Un compte suspendu ou banni conserve l'accès en
+          lecture à son historique mais ne peut plus créer de nouveau log
+          pendant la durée de la sanction. L'utilisateur peut contester une
+          décision de modération en écrivant à contact@elevenlogs.app.
         </p>
       </LegalSection>
 
@@ -116,14 +136,16 @@ export function CGU() {
 
       <LegalSection title="7. Résiliation">
         <p>
-          L'utilisateur peut supprimer son compte à tout moment depuis son
-          profil, ou en en faisant la demande à contact@elevenlogs.app. La
-          suppression entraîne l'effacement de son compte et de ses logs,
-          conformément à la{" "}
+          L'utilisateur peut demander la suppression de son compte à tout
+          moment en écrivant à contact@elevenlogs.app. La suppression
+          entraîne l'effacement de son compte et de ses logs, conformément à
+          la{" "}
           <a href="/confidentialite" className="text-projecteur">
             politique de confidentialité
           </a>
-          .
+          . Une fonctionnalité de suppression directement accessible depuis
+          le profil est prévue ; en attendant sa mise en place, la demande
+          par email est traitée dans les meilleurs délais.
         </p>
       </LegalSection>
 
