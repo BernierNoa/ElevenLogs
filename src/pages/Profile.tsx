@@ -9,6 +9,7 @@ import { useProfileSettings } from "../hooks/useProfileSettings";
 import { useUpdateProfileVisibility } from "../hooks/useUpdateProfileVisibility";
 import { useBlockedUsersList } from "../hooks/useBlockedUsersList";
 import { useBlockMutations } from "../hooks/useBlockMutations";
+import { InvitePanel } from "../components/profile/InvitePanel";
 import { showToast } from "../lib/toastStore";
 
 function SectionTitle({ children }: { children: string }) {
@@ -147,6 +148,8 @@ export function Profile() {
         </Link>
         .
       </p>
+
+      {user?.id && <InvitePanel userId={user.id} />}
 
       <div className="mt-8">
         <SectionTitle>Confidentialité</SectionTitle>

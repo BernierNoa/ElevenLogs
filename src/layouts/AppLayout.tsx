@@ -8,6 +8,7 @@ import { ToastHost } from "../components/ui/Toast";
 import { OfflineSyncManager } from "../components/OfflineSyncManager";
 import { PendingLogsIndicator } from "../components/PendingLogsIndicator";
 import { ProfileSync } from "../components/ProfileSync";
+import { PendingInviteFollow } from "../components/PendingInviteFollow";
 import { PatchNoteModal } from "../components/PatchNoteModal";
 import { AddToHomeScreenPrompt } from "../components/AddToHomeScreenPrompt";
 
@@ -32,6 +33,7 @@ export function AppLayout() {
       <PendingLogsIndicator />
       <OfflineSyncManager />
       <ProfileSync />
+      <PendingInviteFollow />
       <PatchNoteModal />
       <AddToHomeScreenPrompt />
     </div>

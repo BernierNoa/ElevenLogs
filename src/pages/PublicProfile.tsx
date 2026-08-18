@@ -1,6 +1,7 @@
-import { useState } from "react";
-import { useParams } from "react-router";
+import { useEffect, useState } from "react";
+import { useParams, useSearchParams } from "react-router";
 import { useUser } from "@clerk/react-router";
+import { storePendingInvite } from "../lib/inviteStorage";
 import { Button } from "../components/ui/Button";
 import { ActivityFeedItem } from "../components/ActivityFeedItem";
 import { FollowListModal } from "../components/FollowListModal";
@@ -28,6 +29,20 @@ type ProfileTab = "avis" | "stats";
 export function PublicProfile() {
   const { userId } = useParams<{ userId: string }>();
   const { user: currentUser } = useUser();
+  const [searchParams, setSearchParams] = useSearchParams();
+
+  useEffect(() => {
+    if (!userId || searchParams.get("invite") !== "1") return;
+    storePendingInvite(userId);
+    setSearchParams(
+      (prev) => {
+        const next = new URLSearchParams(prev);
+        next.delete("invite");
+        return next;
+      },
+      { replace: true },
+    );
+  }, [userId, searchParams, setSearchParams]);
   const {
     data: profile,
     isLoading: profileLoading,
