@@ -5,6 +5,7 @@ import { Button } from "../components/ui/Button";
 import { Badge } from "../components/ui/Badge";
 import { ActivityFeedItem } from "../components/ActivityFeedItem";
 import { useWeeklyLogs } from "../hooks/useWeeklyLogs";
+import { useMyLogs } from "../hooks/useMyLogs";
 import { useLogLikes } from "../hooks/useLogLikes";
 import { useLikeMutations } from "../hooks/useLikeMutations";
 import { useCommentCounts } from "../hooks/useCommentCounts";
@@ -22,6 +23,20 @@ export function Decouverte() {
 
   const weekly = useWeeklyLogs();
   const items = useMemo(() => weekly.data ?? [], [weekly.data]);
+
+  const myLogs = useMyLogs();
+
+  const myRatingAvg = useMemo(() => {
+    const map = myLogs.data;
+    if (!map || map.size === 0) return null;
+    let sum = 0;
+    let count = 0;
+    for (const l of map.values()) {
+      sum += l.rating;
+      count += 1;
+    }
+    return count > 0 ? sum / count : null;
+  }, [myLogs.data]);
 
   const { data: following } = useFollowing();
   const { follow, unfollow } = useFollowMutations();
@@ -57,10 +72,30 @@ export function Decouverte() {
     );
   }
 
-  function sortByLikes(list: FeedLogItem[]): FeedLogItem[] {
-    return [...list].sort(
-      (a, b) => (likes?.get(b.id)?.count ?? 0) - (likes?.get(a.id)?.count ?? 0),
-    );
+  // (tri perso géré par `personalScore`) : pas besoin d'un tri "likes" pur.
+
+  function ratingSimilarityReason(itemRating: number): string | null {
+    if (myRatingAvg == null) return null;
+    const diff = Math.abs(itemRating - myRatingAvg);
+    if (diff <= 0.5) return "Notes très proches des tiennes";
+    if (diff <= 1.0) return "Même style de notes";
+    return null;
+  }
+
+  function personalScore(item: FeedLogItem): number {
+    const likeCount = likes?.get(item.id)?.count ?? 0;
+    const isFollowed = following?.has(item.userId) ?? false;
+
+    let ratingScore = 0;
+    if (myRatingAvg != null) {
+      const diff = Math.abs(item.rating - myRatingAvg);
+      if (diff <= 0.5) ratingScore = 50;
+      else if (diff <= 1.0) ratingScore = 20;
+      else ratingScore = 0;
+    }
+
+    // Priorité : amis suivis, puis similarité, puis popularité
+    return (isFollowed ? 1000 : 0) + ratingScore + likeCount;
   }
 
   const topMatchId = useMemo(() => {
@@ -73,8 +108,15 @@ export function Decouverte() {
 
   const topMatchItems = items.filter((i) => i.match.id === topMatchId);
   const topMatch = topMatchItems[0]?.match ?? null;
-  const topMatchBest = sortByLikes(topMatchItems).slice(0, TOP_MATCH_LOGS_LIMIT);
-  const weeklyBest = sortByLikes(items).slice(0, WEEKLY_BEST_LIMIT);
+  const topMatchBestPersonal =
+    [...topMatchItems].sort((a, b) => personalScore(b) - personalScore(a)).slice(
+      0,
+      TOP_MATCH_LOGS_LIMIT,
+    );
+  const weeklyBestPersonal =
+    [...items]
+      .sort((a, b) => personalScore(b) - personalScore(a))
+      .slice(0, WEEKLY_BEST_LIMIT);
 
   if (isLoaded && !isSignedIn) {
     return (
@@ -150,7 +192,7 @@ export function Decouverte() {
             Les avis les plus aimés
           </h3>
           <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-            {topMatchBest.map((item) => (
+            {topMatchBestPersonal.map((item) => (
               <ActivityFeedItem
                 key={item.id}
                 item={item}
@@ -163,13 +205,19 @@ export function Decouverte() {
                 onToggleLike={handleToggleLike}
                 isLikePending={isLikeTargetPending(item.id)}
                 commentCount={commentCounts?.get(item.id) ?? 0}
+                recommendationReason={
+                  (following?.has(item.userId) ?? false)
+                    ? "Tu suis l’auteur de ce log"
+                    : ratingSimilarityReason(item.rating) ??
+                      "Les logs les plus aimés de la semaine"
+                }
               />
             ))}
           </div>
         </div>
       )}
 
-      {weeklyBest.length > 0 && (
+      {weeklyBestPersonal.length > 0 && (
         <div className="mt-10">
           <div className="flex items-center gap-3.5 mb-3">
             <h2 className="font-data text-[10.5px] tracking-[0.13em] uppercase text-gris-fonce">
@@ -178,7 +226,7 @@ export function Decouverte() {
             <span className="flex-1 h-px bg-ligne" />
           </div>
           <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-            {weeklyBest.map((item) => (
+            {weeklyBestPersonal.map((item) => (
               <ActivityFeedItem
                 key={item.id}
                 item={item}
@@ -191,6 +239,12 @@ export function Decouverte() {
                 onToggleLike={handleToggleLike}
                 isLikePending={isLikeTargetPending(item.id)}
                 commentCount={commentCounts?.get(item.id) ?? 0}
+                recommendationReason={
+                  (following?.has(item.userId) ?? false)
+                    ? "Tu suis l’auteur de ce log"
+                    : ratingSimilarityReason(item.rating) ??
+                      "Les logs les plus aimés de la semaine"
+                }
               />
             ))}
           </div>

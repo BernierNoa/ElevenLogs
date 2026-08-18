@@ -23,6 +23,8 @@ export interface ActivityFeedItemProps {
   isOwnLog: boolean;
   onToggleFollow: (userId: string) => void;
   isFollowPending?: boolean;
+  /** Petit libellé affiché pour expliquer pourquoi ce log apparaît dans la découverte. */
+  recommendationReason?: string;
   likeCount?: number;
   likedByMe?: boolean;
   onToggleLike?: (logId: string) => void;
@@ -37,6 +39,7 @@ export function ActivityFeedItem({
   isOwnLog,
   onToggleFollow,
   isFollowPending,
+  recommendationReason,
   likeCount = 0,
   likedByMe = false,
   onToggleLike,
@@ -106,6 +109,12 @@ export function ActivityFeedItem({
         </span>
         <Badge variant="comp">{item.match.competitionName}</Badge>
       </div>
+
+      {recommendationReason && (
+        <p className="font-data text-[10px] text-gris-fonce uppercase tracking-[0.06em] mb-3">
+          {recommendationReason}
+        </p>
+      )}
 
       <div className="font-display font-bold [font-stretch:104%] text-[14.5px] mb-3">
         {item.match.homeTeamName}
