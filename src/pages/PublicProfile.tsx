@@ -20,6 +20,7 @@ import { useLikeMutations } from "../hooks/useLikeMutations";
 import { useCommentCounts } from "../hooks/useCommentCounts";
 import { useSeasonStats } from "../hooks/useSeasonStats";
 import { SeasonStatsView } from "../components/SeasonStatsView";
+import { ComparisonCard } from "../components/profile/ComparisonCard";
 import { showToast } from "../lib/toastStore";
 
 type ProfileTab = "avis" | "stats";
@@ -59,7 +60,9 @@ export function PublicProfile() {
   );
   const [openList, setOpenList] = useState<FollowListKind | null>(null);
   const [tab, setTab] = useState<ProfileTab>("avis");
+  const [showComparison, setShowComparison] = useState(false);
   const seasonStats = useSeasonStats(userId);
+  const myStats = useSeasonStats(currentUser?.id);
 
   const isOwnProfile = currentUser?.id === userId;
   const isFollowing = following?.has(userId ?? "") ?? false;
@@ -289,7 +292,50 @@ export function PublicProfile() {
                   </Button>
                 </div>
               ) : (
-                <SeasonStatsView stats={seasonStats} logOwnerId={userId} readOnly={!isOwnProfile} />
+                <>
+                  {!isOwnProfile && currentUser && (
+                    <div className="mb-5">
+                      <Button
+                        variant="secondaire"
+                        size="sm"
+                        onClick={() => setShowComparison((v) => !v)}
+                      >
+                        {showComparison ? "Masquer le comparatif" : "Comparer avec moi"}
+                      </Button>
+
+                      {showComparison && (
+                        <div className="mt-4">
+                          {myStats.isLoading ? (
+                            <p className="text-gris-fonce text-[13px]">
+                              Chargement de tes stats…
+                            </p>
+                          ) : myStats.isError ? (
+                            <div>
+                              <p className="text-carton text-[13px] mb-3">
+                                Impossible de charger tes statistiques. Réessaie plus tard.
+                              </p>
+                              <Button
+                                variant="secondaire"
+                                size="sm"
+                                onClick={() => myStats.refetch()}
+                              >
+                                Réessayer
+                              </Button>
+                            </div>
+                          ) : (
+                            <ComparisonCard
+                              mine={myStats}
+                              theirs={seasonStats}
+                              theirName={profile.display_name}
+                            />
+                          )}
+                        </div>
+                      )}
+                    </div>
+                  )}
+
+                  <SeasonStatsView stats={seasonStats} logOwnerId={userId} readOnly={!isOwnProfile} />
+                </>
               )}
             </div>
           )}
