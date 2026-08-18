@@ -9,6 +9,7 @@ import { OfflineSyncManager } from "../components/OfflineSyncManager";
 import { PendingLogsIndicator } from "../components/PendingLogsIndicator";
 import { ProfileSync } from "../components/ProfileSync";
 import { PendingInviteFollow } from "../components/PendingInviteFollow";
+import { BadgeUnlockWatcher } from "../components/BadgeUnlockWatcher";
 import { PatchNoteModal } from "../components/PatchNoteModal";
 import { AddToHomeScreenPrompt } from "../components/AddToHomeScreenPrompt";
 
@@ -34,6 +35,7 @@ export function AppLayout() {
       <OfflineSyncManager />
       <ProfileSync />
       <PendingInviteFollow />
+      <BadgeUnlockWatcher />
       <PatchNoteModal />
       <AddToHomeScreenPrompt />
     </div>

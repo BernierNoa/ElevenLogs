@@ -380,4 +380,19 @@
     background: rgba(31, 224, 122, 0.08);
     border-left-color: var(--color-projecteur);
   }
+
+  /* ============ ÉCUSSONS DE BADGES ============ */
+  /* Forme d'écusson façon blason de club plutôt qu'un simple cercle/carré —
+   * signature visuelle du système de badges, cohérente avec l'identité foot
+   * du reste de l'app. */
+  .ecusson {
+    clip-path: polygon(50% 0%, 100% 16%, 100% 62%, 50% 100%, 0% 62%, 0% 16%);
+  }
+  .ecusson-debloque {
+    background: linear-gradient(160deg, var(--color-projecteur-fonce), var(--color-pelouse));
+    box-shadow: 0 0 22px rgba(31, 224, 122, 0.28);
+  }
+  .ecusson-verrouille {
+    background: var(--color-nuit-haute);
+  }
 }

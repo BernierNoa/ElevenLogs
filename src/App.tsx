@@ -4,6 +4,7 @@ import { Home } from "./pages/Home";
 import { Matches } from "./pages/Matches";
 import { Journal } from "./pages/Journal";
 import { Stats } from "./pages/Stats";
+import { Badges } from "./pages/Badges";
 import { Profile } from "./pages/Profile";
 import { Activity } from "./pages/Activity";
 import { Decouverte } from "./pages/Decouverte";
@@ -24,6 +25,7 @@ export default function App() {
         <Route path="/matchs" element={<Matches />} />
         <Route path="/journal" element={<Journal />} />
         <Route path="/stats" element={<Stats />} />
+        <Route path="/badges" element={<Badges />} />
         <Route path="/profil/*" element={<Profile />} />
         <Route path="/activite" element={<Activity />} />
         <Route path="/decouverte" element={<Decouverte />} />

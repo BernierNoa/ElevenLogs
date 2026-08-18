@@ -10,6 +10,7 @@ import { useUpdateProfileVisibility } from "../hooks/useUpdateProfileVisibility"
 import { useBlockedUsersList } from "../hooks/useBlockedUsersList";
 import { useBlockMutations } from "../hooks/useBlockMutations";
 import { InvitePanel } from "../components/profile/InvitePanel";
+import { BadgesPreview } from "../components/profile/BadgesPreview";
 import { showToast } from "../lib/toastStore";
 
 function SectionTitle({ children }: { children: string }) {
@@ -148,6 +149,8 @@ export function Profile() {
         </Link>
         .
       </p>
+
+      <BadgesPreview />
 
       {user?.id && <InvitePanel userId={user.id} />}
 
