@@ -22,9 +22,12 @@ import { useCommentCounts } from "../hooks/useCommentCounts";
 import { useSeasonStats } from "../hooks/useSeasonStats";
 import { SeasonStatsView } from "../components/SeasonStatsView";
 import { ComparisonCard } from "../components/profile/ComparisonCard";
+import { BadgesSummary } from "../components/badges/BadgesSummary";
+import { BadgesGrid } from "../components/badges/BadgesGrid";
+import { useBadges } from "../hooks/useBadges";
 import { showToast } from "../lib/toastStore";
 
-type ProfileTab = "avis" | "stats";
+type ProfileTab = "avis" | "stats" | "badges";
 
 export function PublicProfile() {
   const { userId } = useParams<{ userId: string }>();
@@ -78,6 +81,7 @@ export function PublicProfile() {
   const [showComparison, setShowComparison] = useState(false);
   const seasonStats = useSeasonStats(userId);
   const myStats = useSeasonStats(currentUser?.id);
+  const profileBadges = useBadges(userId);
 
   const isOwnProfile = currentUser?.id === userId;
   const isFollowing = following?.has(userId ?? "") ?? false;
@@ -221,6 +225,13 @@ export function PublicProfile() {
             >
               Stats
             </button>
+            <button
+              type="button"
+              className={["filtre-chip", tab === "badges" ? "actif" : ""].join(" ")}
+              onClick={() => setTab("badges")}
+            >
+              Badges
+            </button>
           </div>
 
           {tab === "avis" && (
@@ -350,6 +361,30 @@ export function PublicProfile() {
                   )}
 
                   <SeasonStatsView stats={seasonStats} logOwnerId={userId} readOnly={!isOwnProfile} />
+                </>
+              )}
+            </div>
+          )}
+
+          {tab === "badges" && userId && (
+            <div className="mt-6">
+              {isPrivate && !isOwnProfile ? (
+                <p className="text-gris-fonce text-[13px]">
+                  Ce profil est privé — seul son propriétaire voit ses badges.
+                </p>
+              ) : profileBadges.isLoading ? (
+                <p className="text-gris-fonce text-[13px]">Chargement…</p>
+              ) : profileBadges.isError ? (
+                <p className="text-carton text-[13px]">
+                  Impossible de charger les badges. Réessaie plus tard.
+                </p>
+              ) : (
+                <>
+                  <BadgesSummary
+                    unlockedCount={profileBadges.unlockedCount}
+                    total={profileBadges.badges.length}
+                  />
+                  <BadgesGrid badges={profileBadges.badges} />
                 </>
               )}
             </div>
