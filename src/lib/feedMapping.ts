@@ -26,6 +26,7 @@ export interface FeedLogItem {
 export const FEED_LOG_SELECT = `
   id,
   user_id,
+  match_id,
   rating,
   comment,
   created_at,
@@ -45,6 +46,7 @@ export const FEED_LOG_SELECT = `
 interface RawFeedRow {
   id: string;
   user_id: string;
+  match_id: string;
   rating: number;
   comment: string | null;
   created_at: string;
@@ -63,7 +65,6 @@ interface RawFeedRow {
 
 export function mapFeedRow(row: unknown): FeedLogItem | null {
   const r = row as RawFeedRow;
-  if (!r.match) return null;
 
   return {
     id: r.id,
@@ -75,15 +76,15 @@ export function mapFeedRow(row: unknown): FeedLogItem | null {
     createdAt: r.created_at,
     motmName: r.motm?.full_name ?? null,
     match: {
-      id: r.match.id,
-      kickoffAt: r.match.kickoff_at,
-      competitionName: r.match.competition?.name ?? "",
-      homeTeamName: r.match.home_team?.name ?? "?",
-      homeTeamLogoUrl: r.match.home_team?.logo_url ?? null,
-      awayTeamName: r.match.away_team?.name ?? "?",
-      awayTeamLogoUrl: r.match.away_team?.logo_url ?? null,
-      homeScore: r.match.home_score,
-      awayScore: r.match.away_score,
+      id: r.match?.id ?? r.match_id,
+      kickoffAt: r.match?.kickoff_at ?? r.created_at,
+      competitionName: r.match?.competition?.name ?? "Match",
+      homeTeamName: r.match?.home_team?.name ?? "?",
+      homeTeamLogoUrl: r.match?.home_team?.logo_url ?? null,
+      awayTeamName: r.match?.away_team?.name ?? "?",
+      awayTeamLogoUrl: r.match?.away_team?.logo_url ?? null,
+      homeScore: r.match?.home_score ?? null,
+      awayScore: r.match?.away_score ?? null,
     },
   };
 }
