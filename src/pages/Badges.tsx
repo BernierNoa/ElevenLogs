@@ -3,6 +3,7 @@ import { useNavigate } from "react-router";
 import { Button } from "../components/ui/Button";
 import { BadgesSummary } from "../components/badges/BadgesSummary";
 import { BadgesGrid } from "../components/badges/BadgesGrid";
+import { BadgesTracks } from "../components/badges/BadgesTracks";
 import { useBadges } from "../hooks/useBadges";
 
 export function Badges() {
@@ -43,6 +44,8 @@ export function Badges() {
           <div className="mt-6">
             <BadgesSummary unlockedCount={unlockedCount} total={badges.length} />
           </div>
+
+          <BadgesTracks badges={badges} />
           <BadgesGrid badges={badges} />
         </>
       )}
