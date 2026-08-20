@@ -61,17 +61,16 @@ export function useFollowMutations() {
   const follow = useMutation<void, Error, string, FollowContext>({
     mutationFn: async (targetUserId: string) => {
       if (!user) throw new Error(NOT_SIGNED_IN_MESSAGE);
-      // upsert + ignoreDuplicates plutôt qu'un insert simple : si une
-      // tentative précédente a en fait réussi côté serveur mais que sa
-      // réponse s'est perdue (coupure), le retry ne doit pas se prendre une
-      // violation de contrainte unique et déclencher un rollback pour une
-      // action qui a réellement abouti.
+
+      // Insert simple plutôt qu'un upsert : ça évite les chemins "UPDATE"
+      // (aucune policy UPDATE n'existe sur `follows`) qui peuvent faire échouer
+      // l'action même quand l'intention est "ajouter seulement si absent".
       const { error } = await supabase
         .from("follows")
-        .upsert(
-          { follower_id: user.id, followed_id: targetUserId },
-          { onConflict: "follower_id,followed_id", ignoreDuplicates: true },
-        );
+        .insert({ follower_id: user.id, followed_id: targetUserId });
+
+      // Si le couple existe déjà, on considère l'action comme réussie.
+      if (error && error.code === "23505") return;
       if (error) throw error;
     },
     retry: shouldRetry,
