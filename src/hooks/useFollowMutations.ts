@@ -85,6 +85,43 @@ export function useFollowMutations() {
         userId: user?.id,
       });
 
+      // Diagnostic : sur un échec RLS pour `follows`, interroger DB pour
+      // savoir si une ligne `blocks` existe entre les 2 comptes (peu
+      // importe le sens) via la SECURITY DEFINER `is_blocked`.
+      // Puis afficher aussi “toi->cible” via une lecture directe de
+      // `blocks` (qui est autorisée uniquement sur tes propres lignes).
+      if (
+        msg.includes('violates row-level security policy for table "follows"') &&
+        user
+      ) {
+        try {
+          const { data: blockedPair } = await supabase
+            .rpc("is_blocked", { a: user.id, b: targetUserId })
+            .single();
+
+          const { data: myBlockRow } = await supabase
+            .from("blocks")
+            .select("blocker_id, blocked_id")
+            .eq("blocker_id", user.id)
+            .eq("blocked_id", targetUserId)
+            .maybeSingle();
+
+          const youBlocked = !!myBlockRow;
+          const isBlocked = !!blockedPair;
+
+          showToast(
+            `Impossible de suivre (follows RLS) — blocks entre comptes: ${isBlocked ? "oui" : "non"}. toi→cible: ${youBlocked ? "oui" : "non"}.`,
+            {
+              label: "OK",
+              onClick: () => undefined,
+            },
+          );
+          return;
+        } catch {
+          // fallback : message brut ci-dessous
+        }
+      }
+
       // RLS sur `follows` vient très souvent d'un blocage actif
       // (la policy interdit si une ligne existe dans `blocks` dans un sens
       // ou l'autre).
