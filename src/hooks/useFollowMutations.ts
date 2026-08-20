@@ -82,13 +82,7 @@ export function useFollowMutations() {
       const msg = _err?.message ?? "Action impossible pour l'instant.";
       console.error("[useFollowMutations] follow error", { targetUserId, message: msg });
 
-      const friendly = msg.includes(
-        'violates row-level security policy for table "follows"',
-      )
-        ? "Impossible de suivre : un blocage est actif entre vous."
-        : `Impossible de suivre : ${msg}`;
-
-      showToast(friendly, {
+      showToast(`Impossible de suivre : ${msg}`, {
         label: "Réessayer",
         onClick: () => follow.mutate(targetUserId),
       });
@@ -114,13 +108,7 @@ export function useFollowMutations() {
       const msg = _err?.message ?? "Action impossible pour l'instant.";
       console.error("[useFollowMutations] unfollow error", { targetUserId, message: msg });
 
-      const friendly = msg.includes(
-        'violates row-level security policy for table "follows"',
-      )
-        ? "Impossible de ne plus suivre : relation introuvable ou blocage actif."
-        : `Impossible de ne plus suivre : ${msg}`;
-
-      showToast(friendly, {
+      showToast(`Impossible de ne plus suivre : ${msg}`, {
         label: "Réessayer",
         onClick: () => unfollow.mutate(targetUserId),
       });
