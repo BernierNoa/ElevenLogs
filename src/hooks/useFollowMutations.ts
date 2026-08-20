@@ -79,7 +79,9 @@ export function useFollowMutations() {
     onMutate: (targetUserId) => optimisticToggle(targetUserId, true),
     onError: (_err, targetUserId, context) => {
       rollback(context);
-      showToast("Impossible de suivre ce compte pour l'instant.", {
+      const msg = _err?.message ?? "Action impossible pour l'instant.";
+      console.error("[useFollowMutations] follow error", { targetUserId, message: msg });
+      showToast(`Impossible de suivre : ${msg}` , {
         label: "Réessayer",
         onClick: () => follow.mutate(targetUserId),
       });
@@ -102,7 +104,9 @@ export function useFollowMutations() {
     onMutate: (targetUserId) => optimisticToggle(targetUserId, false),
     onError: (_err, targetUserId, context) => {
       rollback(context);
-      showToast("Impossible de ne plus suivre ce compte pour l'instant.", {
+      const msg = _err?.message ?? "Action impossible pour l'instant.";
+      console.error("[useFollowMutations] unfollow error", { targetUserId, message: msg });
+      showToast(`Impossible de ne plus suivre : ${msg}` , {
         label: "Réessayer",
         onClick: () => unfollow.mutate(targetUserId),
       });
