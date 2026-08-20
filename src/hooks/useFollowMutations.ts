@@ -76,12 +76,61 @@ export function useFollowMutations() {
     retry: shouldRetry,
     retryDelay: RETRY_DELAY_MS,
     onMutate: (targetUserId) => optimisticToggle(targetUserId, true),
-    onError: (_err, targetUserId, context) => {
+    onError: async (_err, targetUserId, context) => {
       rollback(context);
       const msg = _err?.message ?? "Action impossible pour l'instant.";
-      console.error("[useFollowMutations] follow error", { targetUserId, message: msg });
+      console.error("[useFollowMutations] follow error", {
+        targetUserId,
+        message: msg,
+        userId: user?.id,
+      });
 
-      showToast(`Impossible de suivre : ${msg}`, {
+      // RLS sur `follows` vient très souvent d'un blocage actif
+      // (la policy interdit si une ligne existe dans `blocks` dans un sens
+      // ou l'autre).
+      if (msg.includes('violates row-level security policy for table "follows"')) {
+        try {
+          const [myBlock, alreadyFollowing] = await Promise.all([
+            supabase
+              .from("blocks")
+              .select("blocked_id")
+              .eq("blocker_id", user!.id)
+              .eq("blocked_id", targetUserId)
+              .maybeSingle(),
+            supabase
+              .from("follows")
+              .select("followed_id")
+              .eq("follower_id", user!.id)
+              .eq("followed_id", targetUserId)
+              .maybeSingle(),
+          ]);
+
+          if (myBlock.data) {
+            showToast(
+              "Impossible de suivre : tu as bloqué ce compte (bloquer empêche le follow).",
+            );
+            return;
+          }
+
+          if (alreadyFollowing.data) {
+            showToast("Tu suis déjà ce compte.");
+            return;
+          }
+
+          showToast(
+            "Impossible de suivre : la relation est refusée (l'autre compte t'a peut-être bloqué).",
+            {
+              label: "Réessayer",
+              onClick: () => follow.mutate(targetUserId),
+            },
+          );
+          return;
+        } catch {
+          // Fallback : message brut.
+        }
+      }
+
+      showToast(`Impossible de suivre : ${msg}` , {
         label: "Réessayer",
         onClick: () => follow.mutate(targetUserId),
       });
