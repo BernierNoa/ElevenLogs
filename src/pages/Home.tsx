@@ -9,6 +9,7 @@ import { StreakBanner } from "../components/home/StreakBanner";
 import { MonthStatsPanel } from "../components/home/MonthStatsPanel";
 import { MatchAgenda } from "../components/home/MatchAgenda";
 import { SuggestedAccounts } from "../components/home/SuggestedAccounts";
+import { FriendsLeaderboard } from "../components/home/FriendsLeaderboard";
 import { LandingHero } from "../components/landing/LandingHero";
 import { LandingFlowDemo } from "../components/landing/LandingFlowDemo";
 import { LandingActivityPreview } from "../components/landing/LandingActivityPreview";
@@ -24,6 +25,7 @@ import { useActivityFeed } from "../hooks/useActivityFeed";
 import { useActivityFeedCustomLogs } from "../hooks/useActivityFeedCustomLogs";
 import { useDiscoveryFeed } from "../hooks/useDiscoveryFeed";
 import { useSuggestedAccounts } from "../hooks/useSuggestedAccounts";
+import { useFriendsLeaderboard } from "../hooks/useFriendsLeaderboard";
 import { useLogLikes } from "../hooks/useLogLikes";
 import { useLikeMutations } from "../hooks/useLikeMutations";
 import { useCommentCounts } from "../hooks/useCommentCounts";
@@ -66,6 +68,7 @@ export function Home() {
   const customFeed = useActivityFeedCustomLogs(followedIds);
   const discovery = useDiscoveryFeed(isSignedIn === true && !hasFollows);
   const suggestedAccounts = useSuggestedAccounts(hasFollows ? undefined : user?.id);
+  const friendsLeaderboard = useFriendsLeaderboard(followedIds);
   const previewEntries = (
     hasFollows
       ? mergeFeedEntries(feed.data?.pages[0] ?? [], customFeed.data ?? [])
@@ -243,6 +246,21 @@ export function Home() {
       </div>
 
       <MonthStatsPanel stats={monthStats} />
+
+      {hasFollows && (friendsLeaderboard.data?.length ?? 0) >= 2 && (
+        <>
+          <div className="flex items-center gap-3.5 mt-8 mb-3">
+            <h2 className="font-data text-[10.5px] tracking-[0.13em] uppercase text-gris-fonce">
+              Classement entre amis
+            </h2>
+            <span className="flex-1 h-px bg-ligne" />
+          </div>
+          <FriendsLeaderboard
+            entries={friendsLeaderboard.data ?? []}
+            currentUserId={user?.id}
+          />
+        </>
+      )}
 
       <div className="flex items-center gap-3.5 mt-8 mb-3">
         <h2 className="font-data text-[10.5px] tracking-[0.13em] uppercase text-gris-fonce">
