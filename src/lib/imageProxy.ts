@@ -8,5 +8,8 @@ const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
 // publique, lecture seule).
 export function proxiedImageUrl(url: string | null | undefined): string | null {
   if (!url) return null;
+  // Si l'image a déjà été convertie en data URL (par ex. pour html-to-image),
+  // inutile (et dangereux) de la repasser dans l'edge proxy.
+  if (url.startsWith("data:")) return url;
   return `${supabaseUrl}/functions/v1/image-proxy?url=${encodeURIComponent(url)}`;
 }
