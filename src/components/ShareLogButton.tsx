@@ -1,11 +1,10 @@
 import { useRef, useState } from "react";
 import { toBlob } from "html-to-image";
-import { useSession, useUser } from "@clerk/react-router";
+import { useUser } from "@clerk/react-router";
 import { Button } from "./ui/Button";
 import { ShareCard, type ShareFormat } from "./ShareCard";
 import { showToast } from "../lib/toastStore";
 import { useProfileSettings } from "../hooks/useProfileSettings";
-import { proxiedImageUrl } from "../lib/imageProxy";
 
 export interface ShareLogButtonProps {
   competitionName: string;
@@ -42,76 +41,14 @@ export function ShareLogButton(props: ShareLogButtonProps) {
   const [isBusy, setIsBusy] = useState<"download" | "copy" | "share" | null>(null);
   const cardRef = useRef<HTMLDivElement>(null);
 
-  const { session } = useSession();
-
   // Identité de qui logge (toujours le compte connecté ici) — auto-résolue
   // plutôt que passée en prop : ShareLogButton n'est monté que depuis le log
   // de l'utilisateur courant (cf. LogMatchModal), jamais celui d'un tiers.
   const { user } = useUser();
   const { data: myProfile } = useProfileSettings(user?.id);
 
-  const [dataUrlOverrides, setDataUrlOverrides] = useState<{
-    competitionLogoUrl: string | null;
-    homeTeamLogoUrl: string | null;
-    awayTeamLogoUrl: string | null;
-  } | null>(null);
-
-  async function fetchImageAsDataUrl(sourceUrl: string | null | undefined) {
-    if (!sourceUrl) return null;
-    if (sourceUrl.startsWith("data:")) return sourceUrl;
-
-    // On passe par image-proxy (qui peut requérir un auth JWT) et on
-    // convertit ensuite en data URL pour que html-to-image n'ait plus
-    // besoin de refaire des fetch cross-origin.
-    const proxied = proxiedImageUrl(sourceUrl);
-    if (!proxied) return null;
-
-    const token = (await session?.getToken()) ?? null;
-    if (!token) return null;
-
-    const res = await fetch(proxied, {
-      headers: { Authorization: `Bearer ${token}` },
-    });
-    if (!res.ok) return null;
-
-    const blob = await res.blob();
-    return await new Promise<string>((resolve, reject) => {
-      const reader = new FileReader();
-      reader.onerror = () => reject(new Error("read_blob_failed"));
-      reader.onloadend = () => resolve(String(reader.result));
-      reader.readAsDataURL(blob);
-    });
-  }
-
   async function captureBlob(): Promise<Blob | null> {
     if (!cardRef.current) return null;
-
-    // Précharge les logos via auth (si nécessaire), convertis en data URLs,
-    // puis seulement après capture.
-    if (session) {
-      try {
-        const [competition, home, away] = await Promise.all([
-          fetchImageAsDataUrl(props.competitionLogoUrl),
-          fetchImageAsDataUrl(props.homeTeamLogoUrl),
-          fetchImageAsDataUrl(props.awayTeamLogoUrl),
-        ]);
-        setDataUrlOverrides({
-          competitionLogoUrl: competition,
-          homeTeamLogoUrl: home,
-          awayTeamLogoUrl: away,
-        });
-
-        // Laisse React appliquer le rendu avant html-to-image.
-        // (un seul setTimeout(0) est parfois insuffisant sur mobile)
-        await new Promise<void>((resolve) =>
-          requestAnimationFrame(() =>
-            requestAnimationFrame(() => resolve()),
-          ),
-        );
-      } catch {
-        // fallback : on garde les URLs originales + imagePlaceholder
-      }
-    }
     // pixelRatio 1 : les dimensions du composant sont déjà en pixels finaux
     // (1080×1920 / 1080×1080), pas la peine de sur-échantillonner.
     //
@@ -267,9 +204,6 @@ export function ShareLogButton(props: ShareLogButtonProps) {
           ref={cardRef}
           format={format}
           {...props}
-          competitionLogoUrl={dataUrlOverrides?.competitionLogoUrl}
-          homeTeamLogoUrl={dataUrlOverrides?.homeTeamLogoUrl}
-          awayTeamLogoUrl={dataUrlOverrides?.awayTeamLogoUrl}
           sharedByDisplayName={myProfile?.display_name}
           sharedByAvatarUrl={myProfile?.avatar_url}
         />
