@@ -100,8 +100,14 @@ export function ShareLogButton(props: ShareLogButtonProps) {
           homeTeamLogoUrl: home,
           awayTeamLogoUrl: away,
         });
+
         // Laisse React appliquer le rendu avant html-to-image.
-        await new Promise((r) => setTimeout(r, 0));
+        // (un seul setTimeout(0) est parfois insuffisant sur mobile)
+        await new Promise<void>((resolve) =>
+          requestAnimationFrame(() =>
+            requestAnimationFrame(() => resolve()),
+          ),
+        );
       } catch {
         // fallback : on garde les URLs originales + imagePlaceholder
       }
