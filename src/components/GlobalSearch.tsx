@@ -158,6 +158,9 @@ export function GlobalSearch() {
           kickoffAt={activeMatch.kickoff_at}
           homeScore={activeMatch.home_score}
           awayScore={activeMatch.away_score}
+          competitionLogoUrl={activeMatch.competition?.logo_url ?? null}
+          homeTeamLogoUrl={activeMatch.home_team?.logo_url ?? null}
+          awayTeamLogoUrl={activeMatch.away_team?.logo_url ?? null}
           existingLog={myLogs?.get(activeMatch.id)}
           onClose={() => {
             setActiveMatch(null);

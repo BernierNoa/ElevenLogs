@@ -15,6 +15,9 @@ export interface ShareLogButtonProps {
   rating: number;
   motmName: string | null;
   comment: string | null;
+  competitionLogoUrl?: string | null;
+  homeTeamLogoUrl?: string | null;
+  awayTeamLogoUrl?: string | null;
 }
 
 const TRANSPARENT_PIXEL =

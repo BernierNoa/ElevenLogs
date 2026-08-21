@@ -19,6 +19,9 @@ export interface LogMatchModalProps {
   homeScore?: number | null;
   awayScore?: number | null;
   existingLog?: LogItem;
+  competitionLogoUrl?: string | null;
+  homeTeamLogoUrl?: string | null;
+  awayTeamLogoUrl?: string | null;
 }
 
 export function LogMatchModal({
@@ -31,6 +34,9 @@ export function LogMatchModal({
   homeScore = null,
   awayScore = null,
   existingLog,
+  competitionLogoUrl = null,
+  homeTeamLogoUrl = null,
+  awayTeamLogoUrl = null,
 }: LogMatchModalProps) {
   const initialRating = existingLog?.rating ?? null;
   const initialMotmPlayerId = existingLog?.motm_player_id ?? null;
@@ -234,6 +240,9 @@ export function LogMatchModal({
               rating={rating}
               motmName={motmName}
               comment={comment.trim() || null}
+              competitionLogoUrl={competitionLogoUrl}
+              homeTeamLogoUrl={homeTeamLogoUrl}
+              awayTeamLogoUrl={awayTeamLogoUrl}
             />
           </div>
         )}

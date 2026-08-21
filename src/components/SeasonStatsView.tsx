@@ -581,6 +581,9 @@ export function SeasonStatsView({ stats, logOwnerId, readOnly = false, streak }:
           kickoffAt={activeMatch.kickoff_at}
           homeScore={activeMatch.home_score}
           awayScore={activeMatch.away_score}
+          competitionLogoUrl={activeMatch.competition?.logo_url ?? null}
+          homeTeamLogoUrl={activeMatch.home_team?.logo_url ?? null}
+          awayTeamLogoUrl={activeMatch.away_team?.logo_url ?? null}
           existingLog={
             [...stats.top3, ...stats.flop3].find((lm) => lm.match.id === activeMatchId)
               ?.log

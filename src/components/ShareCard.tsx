@@ -2,6 +2,7 @@ import { forwardRef, useState } from "react";
 import { LedRatingBar } from "./LedRatingBar";
 import { abbreviateTeamName } from "../lib/teamAbbreviation";
 import { crestGradient } from "../lib/crestGradient";
+import { proxiedImageUrl } from "../lib/imageProxy";
 
 export type ShareFormat = "story" | "post";
 
@@ -15,6 +16,9 @@ export interface ShareCardProps {
   rating: number;
   motmName: string | null;
   comment: string | null;
+  competitionLogoUrl?: string | null;
+  homeTeamLogoUrl?: string | null;
+  awayTeamLogoUrl?: string | null;
   /** Identité de qui a loggé le match — story uniquement (le format post
    * reste inchangé). Absent tant que le profil n'a pas fini de charger :
    * le badge ne s'affiche simplement pas plutôt qu'un espace vide. */
@@ -41,13 +45,38 @@ function initialsOf(name: string): string {
   return (parts[0][0] + parts[1][0]).toUpperCase();
 }
 
-// Toujours le dégradé + monogramme, jamais le vrai blason PronoGoat : ce
-// serveur ne renvoie aucun en-tête CORS (vérifié en direct), donc
-// html-to-image ne peut jamais lire les pixels de l'image pour l'intégrer à
-// la capture — un <img> s'affiche très bien à l'écran mais ressort
-// invisible (ou casse toute la capture sans imagePlaceholder) à l'export.
-// Contrainte serveur tierce, pas contournable côté client.
-function ShareCrest({ name, size }: { name: string; size: number }) {
+// Vrai blason quand disponible (via image-proxy — PronoGoat ne renvoie
+// aucun en-tête CORS, un <img> direct ne peut pas être lu par html-to-image
+// à l'export), sinon dégradé + monogramme. Même repli que ShareAvatar :
+// l'échec du logo ne doit jamais faire échouer toute la capture.
+function ShareCrest({
+  name,
+  size,
+  logoUrl,
+}: {
+  name: string;
+  size: number;
+  logoUrl?: string | null;
+}) {
+  const [failed, setFailed] = useState(false);
+  const proxied = proxiedImageUrl(logoUrl);
+
+  if (proxied && !failed) {
+    return (
+      <span
+        style={{ width: size, height: size, background: "var(--color-nuit-haute)" }}
+        className="rounded-[28px] grid place-items-center shrink-0 p-4"
+      >
+        <img
+          src={proxied}
+          alt=""
+          onError={() => setFailed(true)}
+          className="w-full h-full object-contain"
+        />
+      </span>
+    );
+  }
+
   return (
     <span
       style={{ width: size, height: size, background: crestGradient(name) }}
@@ -55,6 +84,32 @@ function ShareCrest({ name, size }: { name: string; size: number }) {
     >
       <span style={{ fontSize: Math.round(size * 0.26) }}>{abbreviateTeamName(name)}</span>
     </span>
+  );
+}
+
+// Même repli que ShareCrest, pour le badge de compétition en haut de la
+// story (jusqu'ici toujours un simple point de couleur).
+function CompetitionMark({ logoUrl }: { logoUrl?: string | null }) {
+  const [failed, setFailed] = useState(false);
+  const proxied = proxiedImageUrl(logoUrl);
+
+  if (proxied && !failed) {
+    return (
+      <img
+        src={proxied}
+        alt=""
+        onError={() => setFailed(true)}
+        className="w-8 h-8 rounded-full object-contain shrink-0"
+        style={{ background: "var(--color-nuit-haute)" }}
+      />
+    );
+  }
+
+  return (
+    <span
+      className="w-8 h-8 rounded-full shrink-0"
+      style={{ background: "var(--color-pelouse)" }}
+    />
   );
 }
 
@@ -99,6 +154,9 @@ export const ShareCard = forwardRef<HTMLDivElement, ShareCardProps>(function Sha
     comment,
     sharedByDisplayName,
     sharedByAvatarUrl,
+    competitionLogoUrl,
+    homeTeamLogoUrl,
+    awayTeamLogoUrl,
   },
   ref,
 ) {
@@ -128,10 +186,7 @@ export const ShareCard = forwardRef<HTMLDivElement, ShareCardProps>(function Sha
         <div className="relative flex flex-col h-full px-14 py-16">
           <div className="flex items-start justify-between gap-3">
             <div className="flex items-center gap-2.5 bg-nuit-haute/70 border border-ligne rounded-full pl-2 pr-4 py-2 min-w-0">
-              <span
-                className="w-8 h-8 rounded-full shrink-0"
-                style={{ background: "var(--color-pelouse)" }}
-              />
+              <CompetitionMark logoUrl={competitionLogoUrl} />
               <span className="font-data text-[19px] tracking-[0.11em] uppercase text-projecteur truncate">
                 {competitionName}
               </span>
@@ -158,7 +213,7 @@ export const ShareCard = forwardRef<HTMLDivElement, ShareCardProps>(function Sha
 
           <div className="flex items-center justify-center gap-6">
             <div className="flex flex-col items-center gap-4 w-[240px] min-w-0">
-              <ShareCrest name={homeTeamName} size={172} />
+              <ShareCrest name={homeTeamName} size={172} logoUrl={homeTeamLogoUrl} />
               <span className="font-display font-bold [font-stretch:104%] text-[28px] text-center leading-tight truncate w-full">
                 {homeTeamName}
               </span>
@@ -193,7 +248,7 @@ export const ShareCard = forwardRef<HTMLDivElement, ShareCardProps>(function Sha
             )}
 
             <div className="flex flex-col items-center gap-4 w-[240px] min-w-0">
-              <ShareCrest name={awayTeamName} size={172} />
+              <ShareCrest name={awayTeamName} size={172} logoUrl={awayTeamLogoUrl} />
               <span className="font-display font-bold [font-stretch:104%] text-[28px] text-center leading-tight truncate w-full">
                 {awayTeamName}
               </span>
@@ -243,6 +298,9 @@ export const ShareCard = forwardRef<HTMLDivElement, ShareCardProps>(function Sha
       </div>
 
       <div className="text-center">
+        <div className="flex justify-center mb-3">
+          <ShareCrest name={homeTeamName} size={64} logoUrl={homeTeamLogoUrl} />
+        </div>
         <div className="font-display font-bold [font-stretch:104%] text-[46px] leading-tight">
           {homeTeamName}
         </div>
@@ -253,6 +311,9 @@ export const ShareCard = forwardRef<HTMLDivElement, ShareCardProps>(function Sha
             {awayScore}
           </div>
         )}
+        <div className="flex justify-center mt-2 mb-3">
+          <ShareCrest name={awayTeamName} size={64} logoUrl={awayTeamLogoUrl} />
+        </div>
         <div className="font-display font-bold [font-stretch:104%] text-[46px] leading-tight">
           {awayTeamName}
         </div>
