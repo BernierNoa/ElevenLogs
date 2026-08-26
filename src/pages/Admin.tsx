@@ -4,19 +4,22 @@ import { Navigate } from "react-router";
 import { useAdminStats } from "../hooks/useAdminStats";
 import { useAdminReports } from "../hooks/useAdminReports";
 import { useAdminMatches } from "../hooks/useAdminMatches";
+import { useAdminGlobalStats } from "../hooks/useAdminGlobalStats";
 import { AdminOverview } from "../components/admin/AdminOverview";
 import { AdminUsers } from "../components/admin/AdminUsers";
 import { AdminReports } from "../components/admin/AdminReports";
 import { AdminMatches } from "../components/admin/AdminMatches";
+import { AdminGlobalStats } from "../components/admin/AdminGlobalStats";
 import { ADMIN_USER_ID } from "../lib/admin";
 
-type AdminTab = "apercu" | "utilisateurs" | "signalements" | "matchs";
+type AdminTab = "apercu" | "utilisateurs" | "signalements" | "matchs" | "stats";
 
 const TABS: { key: AdminTab; label: string }[] = [
   { key: "apercu", label: "Vue d'ensemble" },
   { key: "utilisateurs", label: "Utilisateurs" },
   { key: "signalements", label: "Signalements" },
   { key: "matchs", label: "Matchs" },
+  { key: "stats", label: "Stats" },
 ];
 
 export function Admin() {
@@ -26,6 +29,7 @@ export function Admin() {
   const stats = useAdminStats();
   const reports = useAdminReports();
   const adminMatches = useAdminMatches();
+  const globalStats = useAdminGlobalStats();
 
   if (!isLoaded) return null;
   if (user?.id !== ADMIN_USER_ID) return <Navigate to="/" replace />;
@@ -97,6 +101,15 @@ export function Admin() {
             isLoading={adminMatches.isLoading}
             isError={adminMatches.isError}
             onRetry={() => adminMatches.refetch()}
+          />
+        )}
+
+        {tab === "stats" && (
+          <AdminGlobalStats
+            stats={globalStats.data}
+            isLoading={globalStats.isLoading}
+            isError={globalStats.isError}
+            onRetry={() => globalStats.refetch()}
           />
         )}
       </div>
