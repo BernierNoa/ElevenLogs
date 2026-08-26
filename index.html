@@ -5,6 +5,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="color-scheme" content="dark" />
     <meta name="theme-color" content="#0A0B0D" />
+    <!-- favicon.ico en premier et sans "type" : Google (et pas mal de
+    crawlers/vieux navigateurs) cherche explicitement /favicon.ico plutôt
+    que de faire confiance au SVG — sans lui, /favicon.ico tombait sur le
+    fallback SPA (index.html), et Google affichait une icône générique
+    dans les résultats de recherche au lieu du vrai logo. -->
+    <link rel="icon" href="/favicon.ico" sizes="any" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
     <link rel="manifest" href="/manifest.json" />
