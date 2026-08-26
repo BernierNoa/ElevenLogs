@@ -24,6 +24,16 @@ export interface ShareCardProps {
    * le badge ne s'affiche simplement pas plutôt qu'un espace vide. */
   sharedByDisplayName?: string | null;
   sharedByAvatarUrl?: string | null;
+  /** Pseudo de l'auteur du commentaire mis en avant — story "communauté"
+   * générée depuis l'admin (cf. AdminStoryGenerator), où `comment` n'est
+   * pas celui de la personne qui exporte mais celui qui a reçu le plus de
+   * likes sur ce match. Sans effet si `comment` est vide. */
+  commentAuthorName?: string | null;
+  /** Nombre total d'avis sur ce match — remplace le badge d'identité
+   * (sharedByDisplayName) en mode "communauté", où il n'y a personne en
+   * particulier à créditer pour le partage. Les deux sont mutuellement
+   * exclusifs : sharedByDisplayName est prioritaire s'il est présent. */
+  reviewCount?: number | null;
 }
 
 const DIMENSIONS: Record<ShareFormat, { width: number; height: number }> = {
@@ -154,6 +164,8 @@ export const ShareCard = forwardRef<HTMLDivElement, ShareCardProps>(function Sha
     comment,
     sharedByDisplayName,
     sharedByAvatarUrl,
+    commentAuthorName,
+    reviewCount,
     competitionLogoUrl,
     homeTeamLogoUrl,
     awayTeamLogoUrl,
@@ -192,7 +204,7 @@ export const ShareCard = forwardRef<HTMLDivElement, ShareCardProps>(function Sha
               </span>
             </div>
 
-            {sharedByDisplayName && (
+            {sharedByDisplayName ? (
               <div className="flex items-center gap-2.5 bg-nuit-haute/70 border border-ligne rounded-full pl-2 pr-4 py-2 shrink-0 max-w-[300px]">
                 {sharedByAvatarUrl ? (
                   <ShareAvatar url={sharedByAvatarUrl} name={sharedByDisplayName} />
@@ -206,6 +218,14 @@ export const ShareCard = forwardRef<HTMLDivElement, ShareCardProps>(function Sha
                 )}
                 <span className="text-[18px] font-semibold truncate">{sharedByDisplayName}</span>
               </div>
+            ) : (
+              reviewCount != null && (
+                <div className="flex items-center bg-nuit-haute/70 border border-ligne rounded-full px-4 py-2 shrink-0">
+                  <span className="font-data text-[16px] font-semibold text-projecteur whitespace-nowrap">
+                    {reviewCount} avis
+                  </span>
+                </div>
+              )
             )}
           </div>
 
@@ -265,9 +285,16 @@ export const ShareCard = forwardRef<HTMLDivElement, ShareCardProps>(function Sha
             )}
 
             {comment && (
-              <p className="quote mt-6 !text-[21px]">
-                {truncateComment(comment, STORY_COMMENT_MAX_LENGTH)}
-              </p>
+              <div className="mt-6">
+                <p className="quote !text-[21px]">
+                  {truncateComment(comment, STORY_COMMENT_MAX_LENGTH)}
+                </p>
+                {commentAuthorName && (
+                  <p className="font-data text-[14px] text-gris-fonce mt-2.5">
+                    — {commentAuthorName}
+                  </p>
+                )}
+              </div>
             )}
           </div>
 
@@ -329,7 +356,12 @@ export const ShareCard = forwardRef<HTMLDivElement, ShareCardProps>(function Sha
         )}
 
         {comment && (
-          <p className="quote mt-6 !text-[24px]">{truncateComment(comment, COMMENT_MAX_LENGTH)}</p>
+          <div className="mt-6">
+            <p className="quote !text-[24px]">{truncateComment(comment, COMMENT_MAX_LENGTH)}</p>
+            {commentAuthorName && (
+              <p className="font-data text-[15px] text-gris-fonce mt-2.5">— {commentAuthorName}</p>
+            )}
+          </div>
         )}
       </div>
 

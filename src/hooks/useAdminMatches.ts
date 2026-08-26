@@ -8,9 +8,9 @@ export interface AdminMatchItem {
   status: MatchStatus;
   home_score: number | null;
   away_score: number | null;
-  competition: { id: string; name: string; country: string | null } | null;
-  home_team: { id: string; name: string } | null;
-  away_team: { id: string; name: string } | null;
+  competition: { id: string; name: string; country: string | null; logo_url: string | null } | null;
+  home_team: { id: string; name: string; logo_url: string | null } | null;
+  away_team: { id: string; name: string; logo_url: string | null } | null;
 }
 
 // Hook dédié à la page Admin plutôt que de faire évoluer useMatches (partagé
@@ -30,9 +30,9 @@ export function useAdminMatches() {
           status,
           home_score,
           away_score,
-          competition:competitions(id, name, country),
-          home_team:teams!home_team_id(id, name),
-          away_team:teams!away_team_id(id, name)
+          competition:competitions(id, name, country, logo_url),
+          home_team:teams!home_team_id(id, name, logo_url),
+          away_team:teams!away_team_id(id, name, logo_url)
         `,
         )
         .order("kickoff_at", { ascending: false });

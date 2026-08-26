@@ -6,6 +6,7 @@ import { detectAnomalousTeamIds } from "../../lib/matchAnomalies";
 import { useAdminMatchActions } from "../../hooks/useAdminMatchActions";
 import { showToast } from "../../lib/toastStore";
 import { MatchEditModal } from "./MatchEditModal";
+import { AdminStoryGenerator } from "./AdminStoryGenerator";
 import type { AdminMatchItem } from "../../hooks/useAdminMatches";
 
 export interface AdminMatchesProps {
@@ -43,6 +44,7 @@ export function AdminMatches({ matches, isLoading, isError, onRetry }: AdminMatc
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
   const [page, setPage] = useState(0);
   const [editingMatch, setEditingMatch] = useState<AdminMatchItem | null>(null);
+  const [storyMatch, setStoryMatch] = useState<AdminMatchItem | null>(null);
   const [confirmingBulkDelete, setConfirmingBulkDelete] = useState(false);
 
   const { bulkDeleteMatches } = useAdminMatchActions();
@@ -277,6 +279,9 @@ export function AdminMatches({ matches, isLoading, isError, onRetry }: AdminMatc
                   </div>
 
                   <div className="flex items-center gap-2 shrink-0">
+                    <Button variant="secondaire" size="sm" onClick={() => setStoryMatch(match)}>
+                      Story
+                    </Button>
                     <Button variant="secondaire" size="sm" onClick={() => setEditingMatch(match)}>
                       Corriger
                     </Button>
@@ -335,6 +340,10 @@ export function AdminMatches({ matches, isLoading, isError, onRetry }: AdminMatc
 
       {editingMatch && (
         <MatchEditModal match={editingMatch} onClose={() => setEditingMatch(null)} />
+      )}
+
+      {storyMatch && (
+        <AdminStoryGenerator match={storyMatch} onClose={() => setStoryMatch(null)} />
       )}
     </div>
   );
