@@ -22,7 +22,7 @@ export function TabBar() {
         >
           <span className="relative inline-flex">
             <Icon className="w-[21px] h-[21px]" />
-            {to === "/journal" && catchUpCount > 0 && (
+            {to === "/matchs" && catchUpCount > 0 && (
               <span className="absolute -top-1 -right-1.5 w-2 h-2 rounded-full bg-projecteur" />
             )}
           </span>

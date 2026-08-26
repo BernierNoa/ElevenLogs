@@ -4,28 +4,38 @@ import { useNavigate } from "react-router";
 import { Button } from "../components/ui/Button";
 import { MatchCard } from "../components/MatchCard";
 import { LogMatchModal } from "../components/LogMatchModal";
+import { JournalShareModal } from "../components/JournalShareModal";
 import { CustomLogCard } from "../components/CustomLogCard";
 import { CustomLogModal } from "../components/CustomLogModal";
 import { useMatches } from "../hooks/useMatches";
 import { useMyLogs } from "../hooks/useMyLogs";
-import { useCatchUpMatches } from "../hooks/useCatchUpMatches";
 import { useCommunityAverages } from "../hooks/useCommunityAverages";
 import { useCustomLogs, type CustomLogItem } from "../hooks/useCustomLogs";
 import { useCommentCounts } from "../hooks/useCommentCounts";
+import { useMotmNames } from "../hooks/useMotmNames";
+
+type SortKey = "recent" | "old" | "top" | "low";
+
+const SORTS: { key: SortKey; label: string }[] = [
+  { key: "recent", label: "Plus récents" },
+  { key: "old", label: "Plus anciens" },
+  { key: "top", label: "Meilleures notes" },
+  { key: "low", label: "Moins bonnes notes" },
+];
 
 export function Journal() {
   const { isLoaded, isSignedIn } = useUser();
   const navigate = useNavigate();
   const { data: matches, isError: matchesError, refetch: refetchMatches } = useMatches();
   const { data: myLogs, isLoading } = useMyLogs();
-  const catchUp = useCatchUpMatches();
-  const hasError = matchesError || catchUp.isError;
+  const hasError = matchesError;
 
   function handleRetry() {
     if (matchesError) void refetchMatches();
-    if (catchUp.isError) catchUp.refetch();
   }
   const [activeMatchId, setActiveMatchId] = useState<string | null>(null);
+  const [shareMatchId, setShareMatchId] = useState<string | null>(null);
+  const [sortKey, setSortKey] = useState<SortKey>("recent");
   const { data: customLogs, isLoading: isCustomLogsLoading } = useCustomLogs();
   const [creatingCustomLogMode, setCreatingCustomLogMode] = useState<
     "single" | "multiplex" | null
@@ -34,19 +44,27 @@ export function Journal() {
 
   const loggedMatches = (matches ?? [])
     .filter((match) => myLogs?.has(match.id))
-    .sort(
-      (a, b) =>
-        (myLogs!.get(b.id)!.watched_at ?? "").localeCompare(
-          myLogs!.get(a.id)!.watched_at ?? "",
-        ),
-    );
+    .sort((a, b) => {
+      const logA = myLogs!.get(a.id)!;
+      const logB = myLogs!.get(b.id)!;
+      if (sortKey === "top") return logB.rating - logA.rating;
+      if (sortKey === "low") return logA.rating - logB.rating;
+      const dateCompare = (logB.watched_at ?? "").localeCompare(logA.watched_at ?? "");
+      return sortKey === "old" ? -dateCompare : dateCompare;
+    });
 
-  const activeMatch =
-    matches?.find((m) => m.id === activeMatchId) ??
-    catchUp.matches.find((m) => m.id === activeMatchId);
+  const activeMatch = matches?.find((m) => m.id === activeMatchId);
+  const shareMatch = matches?.find((m) => m.id === shareMatchId);
+  const shareLog = shareMatchId ? myLogs?.get(shareMatchId) : undefined;
 
   const { data: communityAverages } = useCommunityAverages(
     loggedMatches.map((m) => m.id),
+  );
+
+  const { data: motmNames } = useMotmNames(
+    loggedMatches
+      .map((m) => myLogs?.get(m.id)?.motm_player_id)
+      .filter((id): id is string => !!id),
   );
 
   // Un log en attente de synchro n'a pas encore d'id serveur réel (cf.
@@ -63,9 +81,17 @@ export function Journal() {
 
   return (
     <div className="max-w-[1180px] mx-auto px-5 md:px-8 py-7">
-      <h1 className="font-display font-extrabold uppercase tracking-[-0.03em] [font-stretch:110%] text-[28px] md:text-[30px]">
-        Mon journal
-      </h1>
+      <div className="flex items-center justify-between gap-3 flex-wrap">
+        <h1 className="font-display font-extrabold uppercase tracking-[-0.03em] [font-stretch:110%] text-[28px] md:text-[30px]">
+          Mon journal
+        </h1>
+        {isSignedIn && loggedMatches.length > 0 && (
+          <span className="font-data text-[11px] text-gris-fonce uppercase tracking-[0.06em]">
+            {loggedMatches.length} match{loggedMatches.length > 1 ? "s" : ""} noté
+            {loggedMatches.length > 1 ? "s" : ""}
+          </span>
+        )}
+      </div>
 
       {isLoaded && !isSignedIn && (
         <div className="mt-8">
@@ -84,37 +110,6 @@ export function Journal() {
           <Button variant="secondaire" size="sm" onClick={handleRetry}>
             Réessayer
           </Button>
-        </div>
-      )}
-
-      {isSignedIn && !catchUp.isLoading && catchUp.matches.length > 0 && (
-        <div className="mt-7">
-          <div className="flex items-center gap-3.5 mb-3">
-            <h2 className="font-data text-[10.5px] tracking-[0.13em] uppercase text-projecteur">
-              À loguer · {catchUp.matches.length}
-            </h2>
-            <span className="flex-1 h-px bg-ligne" />
-          </div>
-          <p className="text-gris-fonce text-[12.5px] mb-3">
-            Terminés dans les 72 dernières heures, pas encore notés.
-          </p>
-          <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-            {catchUp.matches.map((match) => (
-              <MatchCard
-                key={match.id}
-                competitionName={match.competition?.name ?? ""}
-                homeTeamName={match.home_team?.name ?? "?"}
-                homeTeamLogoUrl={match.home_team?.logo_url}
-                awayTeamName={match.away_team?.name ?? "?"}
-                awayTeamLogoUrl={match.away_team?.logo_url}
-                kickoffAt={match.kickoff_at}
-                status={match.status}
-                homeScore={match.home_score}
-                awayScore={match.away_score}
-                onOpenLog={() => setActiveMatchId(match.id)}
-              />
-            ))}
-          </div>
         </div>
       )}
 
@@ -143,37 +138,41 @@ export function Journal() {
 
       {isSignedIn && loggedMatches.length > 0 && (
         <div className="mt-7">
-          {catchUp.matches.length > 0 && (
-            <div className="flex items-center gap-3.5 mb-3">
-              <h2 className="font-data text-[10.5px] tracking-[0.13em] uppercase text-gris-fonce">
-                Déjà notés
-              </h2>
-              <span className="flex-1 h-px bg-ligne" />
-            </div>
-          )}
-          <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-            {loggedMatches.map((match) => (
-              <MatchCard
-                key={match.id}
-                competitionName={match.competition?.name ?? ""}
-                homeTeamName={match.home_team?.name ?? "?"}
-                homeTeamLogoUrl={match.home_team?.logo_url}
-                awayTeamName={match.away_team?.name ?? "?"}
-                awayTeamLogoUrl={match.away_team?.logo_url}
-                kickoffAt={match.kickoff_at}
-                status={match.status}
-                homeScore={match.home_score}
-                awayScore={match.away_score}
-                myLog={myLogs?.get(match.id)}
-                communityAverage={communityAverages?.get(match.id)}
-                onOpenLog={() => setActiveMatchId(match.id)}
-                commentCount={
-                  myLogs?.get(match.id)
-                    ? matchCommentCounts?.get(myLogs.get(match.id)!.id) ?? 0
-                    : 0
-                }
-              />
+          <div className="flex flex-wrap gap-2 mb-4">
+            {SORTS.map((s) => (
+              <button
+                key={s.key}
+                type="button"
+                className={["filtre-chip", sortKey === s.key ? "actif" : ""].join(" ")}
+                onClick={() => setSortKey(s.key)}
+              >
+                {s.label}
+              </button>
             ))}
+          </div>
+          <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+            {loggedMatches.map((match) => {
+              const log = myLogs?.get(match.id);
+              return (
+                <MatchCard
+                  key={match.id}
+                  competitionName={match.competition?.name ?? ""}
+                  homeTeamName={match.home_team?.name ?? "?"}
+                  homeTeamLogoUrl={match.home_team?.logo_url}
+                  awayTeamName={match.away_team?.name ?? "?"}
+                  awayTeamLogoUrl={match.away_team?.logo_url}
+                  kickoffAt={match.kickoff_at}
+                  status={match.status}
+                  homeScore={match.home_score}
+                  awayScore={match.away_score}
+                  myLog={log}
+                  communityAverage={communityAverages?.get(match.id)}
+                  onOpenLog={() => setActiveMatchId(match.id)}
+                  onShare={() => setShareMatchId(match.id)}
+                  commentCount={log ? matchCommentCounts?.get(log.id) ?? 0 : 0}
+                />
+              );
+            })}
           </div>
         </div>
       )}
@@ -193,6 +192,26 @@ export function Journal() {
           awayTeamLogoUrl={activeMatch.away_team?.logo_url ?? null}
           existingLog={myLogs?.get(activeMatch.id)}
           onClose={() => setActiveMatchId(null)}
+        />
+      )}
+
+      {shareMatch && shareLog && (
+        <JournalShareModal
+          key={shareMatch.id}
+          competitionName={shareMatch.competition?.name ?? ""}
+          homeTeamName={shareMatch.home_team?.name ?? "?"}
+          awayTeamName={shareMatch.away_team?.name ?? "?"}
+          homeScore={shareMatch.home_score}
+          awayScore={shareMatch.away_score}
+          rating={shareLog.rating}
+          motmName={
+            shareLog.motm_player_id ? motmNames?.get(shareLog.motm_player_id) ?? null : null
+          }
+          comment={shareLog.comment}
+          competitionLogoUrl={shareMatch.competition?.logo_url}
+          homeTeamLogoUrl={shareMatch.home_team?.logo_url}
+          awayTeamLogoUrl={shareMatch.away_team?.logo_url}
+          onClose={() => setShareMatchId(null)}
         />
       )}
 

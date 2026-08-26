@@ -44,6 +44,10 @@ export interface MatchCardProps {
    * lib/continents.isImportant) : rend le CTA "Noter ce match" plus visible
    * tant que le match n'est pas encore loggé. */
   important?: boolean;
+  /** Ouvre le partage de story directement depuis la carte (cf. Journal),
+   * sans repasser par la modale d'édition du log. Absent ailleurs (Matchs,
+   * Accueil, Stats) où ce raccourci n'a pas de sens. */
+  onShare?: () => void;
 }
 
 // Écart assumé avec la DA (qui bannit l'imagerie d'équipe) : les logo_url
@@ -91,6 +95,7 @@ export function MatchCard({
   readOnly = false,
   logOwnerId,
   important = false,
+  onShare,
 }: MatchCardProps) {
   const hasScore = homeScore !== null && awayScore !== null;
   const homeLeads = homeScore !== null && awayScore !== null && homeScore > awayScore;
@@ -195,16 +200,29 @@ export function MatchCard({
             <span />
           )}
           {!readOnly && (
-            <Button
-              variant={myLog ? "secondaire" : "primaire"}
-              size="sm"
-              className={
-                important && !myLog ? "shadow-[0_0_14px_rgba(31,224,122,0.4)]" : undefined
-              }
-              onClick={handleLogClick}
-            >
-              {myLog ? "Modifier" : "Noter ce match"}
-            </Button>
+            <div className="flex items-center gap-2 shrink-0">
+              {myLog && !myLog.pending && onShare && (
+                <Button
+                  variant="discret"
+                  size="sm"
+                  iconOnly
+                  aria-label="Partager en story"
+                  onClick={onShare}
+                >
+                  📤
+                </Button>
+              )}
+              <Button
+                variant={myLog ? "secondaire" : "primaire"}
+                size="sm"
+                className={
+                  important && !myLog ? "shadow-[0_0_14px_rgba(31,224,122,0.4)]" : undefined
+                }
+                onClick={handleLogClick}
+              >
+                {myLog ? "Modifier" : "Noter ce match"}
+              </Button>
+            </div>
           )}
         </div>
       )}

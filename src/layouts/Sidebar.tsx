@@ -31,7 +31,7 @@ export function Sidebar() {
           >
             <Icon className="w-[17px] h-[17px] shrink-0" />
             {label}
-            {to === "/journal" && catchUpCount > 0 && (
+            {to === "/matchs" && catchUpCount > 0 && (
               <span className="ml-auto min-w-[18px] h-[18px] px-1 rounded-full bg-projecteur text-noir font-data text-[10px] font-bold grid place-items-center">
                 {catchUpCount}
               </span>
