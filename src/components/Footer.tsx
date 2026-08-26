@@ -1,6 +1,11 @@
+import { useState } from "react";
 import { Link } from "react-router";
+import { Show } from "@clerk/react-router";
+import { BugReportModal } from "./BugReportModal";
 
 export function Footer() {
+  const [isReporting, setIsReporting] = useState(false);
+
   return (
     <footer className="border-t border-ligne px-5 md:px-8 py-5 mt-auto">
       <div className="flex flex-wrap gap-x-4 gap-y-1.5 font-data text-[10.5px] text-gris-fonce uppercase tracking-[0.06em]">
@@ -13,7 +18,18 @@ export function Footer() {
         <Link to="/confidentialite" className="hover:text-craie transition-colors">
           Confidentialité
         </Link>
+        <Show when="signed-in">
+          <button
+            type="button"
+            className="hover:text-craie transition-colors"
+            onClick={() => setIsReporting(true)}
+          >
+            Signaler un bug
+          </button>
+        </Show>
       </div>
+
+      {isReporting && <BugReportModal onClose={() => setIsReporting(false)} />}
     </footer>
   );
 }

@@ -3,21 +3,24 @@ import { useUser } from "@clerk/react-router";
 import { Navigate } from "react-router";
 import { useAdminStats } from "../hooks/useAdminStats";
 import { useAdminReports } from "../hooks/useAdminReports";
+import { useAdminBugReports } from "../hooks/useAdminBugReports";
 import { useAdminMatches } from "../hooks/useAdminMatches";
 import { useAdminGlobalStats } from "../hooks/useAdminGlobalStats";
 import { AdminOverview } from "../components/admin/AdminOverview";
 import { AdminUsers } from "../components/admin/AdminUsers";
 import { AdminReports } from "../components/admin/AdminReports";
+import { AdminBugReports } from "../components/admin/AdminBugReports";
 import { AdminMatches } from "../components/admin/AdminMatches";
 import { AdminGlobalStats } from "../components/admin/AdminGlobalStats";
 import { ADMIN_USER_ID } from "../lib/admin";
 
-type AdminTab = "apercu" | "utilisateurs" | "signalements" | "matchs" | "stats";
+type AdminTab = "apercu" | "utilisateurs" | "signalements" | "bugs" | "matchs" | "stats";
 
 const TABS: { key: AdminTab; label: string }[] = [
   { key: "apercu", label: "Vue d'ensemble" },
   { key: "utilisateurs", label: "Utilisateurs" },
   { key: "signalements", label: "Signalements" },
+  { key: "bugs", label: "Bugs" },
   { key: "matchs", label: "Matchs" },
   { key: "stats", label: "Stats" },
 ];
@@ -28,6 +31,7 @@ export function Admin() {
 
   const stats = useAdminStats();
   const reports = useAdminReports();
+  const bugReports = useAdminBugReports();
   const adminMatches = useAdminMatches();
   const globalStats = useAdminGlobalStats();
 
@@ -35,6 +39,7 @@ export function Admin() {
   if (user?.id !== ADMIN_USER_ID) return <Navigate to="/" replace />;
 
   const pendingReportsCount = (reports.data ?? []).filter((r) => r.status === "pending").length;
+  const newBugReportsCount = (bugReports.data ?? []).filter((r) => r.status === "new").length;
 
   return (
     <div className="max-w-[1180px] mx-auto px-5 md:px-8 py-7">
@@ -54,6 +59,11 @@ export function Admin() {
             {t.key === "signalements" && pendingReportsCount > 0 && (
               <span className="ml-1.5 inline-flex items-center justify-center min-w-[18px] h-[18px] px-1 rounded-full bg-carton text-noir font-bold text-[10px]">
                 {pendingReportsCount}
+              </span>
+            )}
+            {t.key === "bugs" && newBugReportsCount > 0 && (
+              <span className="ml-1.5 inline-flex items-center justify-center min-w-[18px] h-[18px] px-1 rounded-full bg-carton text-noir font-bold text-[10px]">
+                {newBugReportsCount}
               </span>
             )}
           </button>
@@ -92,6 +102,15 @@ export function Admin() {
             isError={reports.isError}
             onRetry={() => reports.refetch()}
             users={stats.data?.users ?? []}
+          />
+        )}
+
+        {tab === "bugs" && (
+          <AdminBugReports
+            reports={bugReports.data ?? []}
+            isLoading={bugReports.isLoading}
+            isError={bugReports.isError}
+            onRetry={() => bugReports.refetch()}
           />
         )}
 
