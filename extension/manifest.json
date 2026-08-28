@@ -1,0 +1,23 @@
+{
+  "manifest_version": 3,
+  "name": "ElevenLogs — Noter un match",
+  "version": "1.0.0",
+  "description": "Ouvre en un clic une petite fenêtre pour noter le match que tu regardes, sans quitter ton onglet.",
+  "icons": {
+    "16": "icons/icon16.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
+  },
+  "action": {
+    "default_title": "Noter un match sur ElevenLogs",
+    "default_icon": {
+      "16": "icons/icon16.png",
+      "48": "icons/icon48.png",
+      "128": "icons/icon128.png"
+    }
+  },
+  "background": {
+    "service_worker": "background.js"
+  },
+  "permissions": ["activeTab"]
+}

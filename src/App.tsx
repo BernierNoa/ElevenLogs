@@ -16,6 +16,7 @@ import { NotFound } from "./pages/NotFound";
 import { Admin } from "./pages/Admin";
 import { SignUpPage } from "./pages/SignUp";
 import { Connexion } from "./pages/Connexion";
+import { QuickLog } from "./pages/QuickLog";
 
 export default function App() {
   return (
@@ -49,6 +50,11 @@ export default function App() {
           <SignUpPage />
         }
       />
+
+      {/* Hors AppLayout (pas de Sidebar/TabBar/Footer) : conçue pour être
+          ouverte dans une petite fenêtre popup depuis l'extension
+          navigateur, cf. extension/background.js. */}
+      <Route path="/rapide" element={<QuickLog />} />
     </Routes>
   );
 }
