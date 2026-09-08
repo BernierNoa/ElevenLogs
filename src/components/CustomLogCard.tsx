@@ -18,6 +18,9 @@ export interface CustomLogCardProps {
    * commentaires. Par défaut le compte connecté ; à fournir explicitement en
    * readOnly pour ne pas donner à tort des droits de modération au visiteur. */
   logOwnerId?: string;
+  /** Ouvre le partage de story directement depuis la carte (cf. Journal),
+   * même raccourci que MatchCard.onShare. Absent en lecture seule. */
+  onShare?: () => void;
 }
 
 function formatWatchedAt(date: string): string {
@@ -34,6 +37,7 @@ export function CustomLogCard({
   commentCount = 0,
   readOnly = false,
   logOwnerId,
+  onShare,
 }: CustomLogCardProps) {
   const { user } = useUser();
   const [isCommenting, setIsCommenting] = useState(false);
@@ -60,6 +64,12 @@ export function CustomLogCard({
         ))}
       </ul>
 
+      {customLog.motmName && (
+        <div className="mb-3.5">
+          <Badge variant="motm">◆ {customLog.motmName}</Badge>
+        </div>
+      )}
+
       {customLog.comment && (
         <p className="text-gris text-[13px] mb-3.5 line-clamp-2">{customLog.comment}</p>
       )}
@@ -79,9 +89,22 @@ export function CustomLogCard({
           </button>
         </div>
         {!readOnly && (
-          <Button variant="secondaire" size="sm" onClick={onEdit}>
-            Modifier
-          </Button>
+          <div className="flex items-center gap-2 shrink-0">
+            {onShare && (
+              <Button
+                variant="discret"
+                size="sm"
+                iconOnly
+                aria-label="Partager en story"
+                onClick={onShare}
+              >
+                📤
+              </Button>
+            )}
+            <Button variant="secondaire" size="sm" onClick={onEdit}>
+              Modifier
+            </Button>
+          </div>
         )}
       </div>
 

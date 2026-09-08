@@ -7,6 +7,7 @@ import { LogMatchModal } from "../components/LogMatchModal";
 import { JournalShareModal } from "../components/JournalShareModal";
 import { CustomLogCard } from "../components/CustomLogCard";
 import { CustomLogModal } from "../components/CustomLogModal";
+import { MultiplexShareModal } from "../components/MultiplexShareModal";
 import { useMatches } from "../hooks/useMatches";
 import { useMyLogs } from "../hooks/useMyLogs";
 import { useCommunityAverages } from "../hooks/useCommunityAverages";
@@ -41,6 +42,7 @@ export function Journal() {
     "single" | "multiplex" | null
   >(null);
   const [editingCustomLog, setEditingCustomLog] = useState<CustomLogItem | null>(null);
+  const [sharingCustomLog, setSharingCustomLog] = useState<CustomLogItem | null>(null);
 
   const loggedMatches = (matches ?? [])
     .filter((match) => myLogs?.has(match.id))
@@ -255,6 +257,7 @@ export function Journal() {
                   key={customLog.id}
                   customLog={customLog}
                   onEdit={() => setEditingCustomLog(customLog)}
+                  onShare={() => setSharingCustomLog(customLog)}
                   commentCount={customLogCommentCounts?.get(customLog.id) ?? 0}
                 />
               ))}
@@ -276,6 +279,14 @@ export function Journal() {
           mode={editingCustomLog.matches.length > 1 ? "multiplex" : "single"}
           existingCustomLog={editingCustomLog}
           onClose={() => setEditingCustomLog(null)}
+        />
+      )}
+
+      {sharingCustomLog && (
+        <MultiplexShareModal
+          key={sharingCustomLog.id}
+          customLog={sharingCustomLog}
+          onClose={() => setSharingCustomLog(null)}
         />
       )}
     </div>

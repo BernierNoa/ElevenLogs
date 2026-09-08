@@ -1,7 +1,9 @@
+import { useState } from "react";
 import { useUser } from "@clerk/react-router";
 import { useNavigate } from "react-router";
 import { Button } from "../components/ui/Button";
 import { SeasonStatsView } from "../components/SeasonStatsView";
+import { StatsShareModal } from "../components/StatsShareModal";
 import { useSeasonStats } from "../hooks/useSeasonStats";
 import { useLogStreak } from "../hooks/useLogStreak";
 
@@ -10,6 +12,7 @@ export function Stats() {
   const navigate = useNavigate();
   const stats = useSeasonStats();
   const streak = useLogStreak();
+  const [showShareModal, setShowShareModal] = useState(false);
 
   if (isLoaded && !isSignedIn) {
     return (
@@ -56,9 +59,20 @@ export function Stats() {
 
   return (
     <div className="max-w-[1180px] mx-auto px-5 md:px-8 py-7">
-      <h1 className="font-display font-extrabold uppercase tracking-[-0.03em] [font-stretch:110%] text-[28px] md:text-[30px]">
-        Ta saison
-      </h1>
+      <div className="flex items-center justify-between gap-3 flex-wrap">
+        <h1 className="font-display font-extrabold uppercase tracking-[-0.03em] [font-stretch:110%] text-[28px] md:text-[30px]">
+          Ta saison
+        </h1>
+        {!hasNoLogs && (
+          <Button variant="secondaire" size="sm" onClick={() => setShowShareModal(true)}>
+            Partager mes stats
+          </Button>
+        )}
+      </div>
+
+      {showShareModal && (
+        <StatsShareModal stats={stats} streak={streak} onClose={() => setShowShareModal(false)} />
+      )}
 
       {hasNoLogs ? (
         <div className="carte p-5 mt-6">

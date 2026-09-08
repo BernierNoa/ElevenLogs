@@ -96,6 +96,12 @@ export function ActivityFeedCustomLogItem({
         </span>
       </div>
 
+      {item.motmName && (
+        <div className="mt-3">
+          <Badge variant="motm">◆ {item.motmName}</Badge>
+        </div>
+      )}
+
       {item.comment && <p className="quote mt-3">{item.comment}</p>}
 
       <div className="mt-3 pt-3 border-t border-ligne flex items-center">

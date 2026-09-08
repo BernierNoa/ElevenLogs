@@ -3,6 +3,7 @@ export interface PublicCustomMatchItem {
   name: string;
   kickoffAt: string | null;
   position: number;
+  matchId: string | null;
 }
 
 export interface PublicCustomLogItem {
@@ -15,6 +16,8 @@ export interface PublicCustomLogItem {
   watchedAt: string;
   createdAt: string;
   matches: PublicCustomMatchItem[];
+  motmPlayerId: string | null;
+  motmName: string | null;
 }
 
 // Forme brute renvoyée par la requête jointe custom_logs → profile_settings
@@ -28,7 +31,9 @@ export const CUSTOM_FEED_LOG_SELECT = `
   watched_at,
   created_at,
   profile:profile_settings(display_name, avatar_url),
-  custom_matches(id, name, kickoff_at, position)
+  motm_player_id,
+  motm:players(full_name),
+  custom_matches(id, name, kickoff_at, position, match_id)
 `;
 
 interface RawCustomFeedRow {
@@ -39,11 +44,14 @@ interface RawCustomFeedRow {
   watched_at: string;
   created_at: string;
   profile: { display_name: string; avatar_url: string | null } | null;
+  motm_player_id: string | null;
+  motm: { full_name: string } | null;
   custom_matches: {
     id: string;
     name: string;
     kickoff_at: string | null;
     position: number;
+    match_id: string | null;
   }[];
 }
 
@@ -59,6 +67,8 @@ export function mapCustomFeedRow(row: unknown): PublicCustomLogItem {
     comment: r.comment,
     watchedAt: r.watched_at,
     createdAt: r.created_at,
+    motmPlayerId: r.motm_player_id,
+    motmName: r.motm?.full_name ?? null,
     matches: [...r.custom_matches]
       .sort((a, b) => a.position - b.position)
       .map((m) => ({
@@ -66,6 +76,7 @@ export function mapCustomFeedRow(row: unknown): PublicCustomLogItem {
         name: m.name,
         kickoffAt: m.kickoff_at,
         position: m.position,
+        matchId: m.match_id,
       })),
   };
 }

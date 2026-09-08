@@ -6,6 +6,9 @@ import { showCelebrateToast, showToast } from "../lib/toastStore";
 export interface SaveCustomLogMatchInput {
   name: string;
   kickoffAt: string | null;
+  /** Renseigné pour un match du référentiel sélectionné via
+   * MultiplexMatchPicker — absent pour un match personnalisé saisi librement. */
+  matchId?: string | null;
 }
 
 export interface SaveCustomLogInput {
@@ -15,6 +18,9 @@ export interface SaveCustomLogInput {
   comment: string | null;
   watchedAt: string;
   matches: SaveCustomLogMatchInput[];
+  /** MVP du multiplex, choisi parmi les compos des matchs sélectionnés —
+   * toujours null pour un match personnalisé. */
+  motmPlayerId?: string | null;
 }
 
 // Pas de transaction multi-tables côté client Supabase : en édition, on
@@ -36,6 +42,8 @@ export function useSaveCustomLog() {
 
       let customLogId = input.id;
 
+      const motmPlayerId = input.motmPlayerId ?? null;
+
       if (customLogId) {
         const { error } = await supabase
           .from("custom_logs")
@@ -43,6 +51,7 @@ export function useSaveCustomLog() {
             rating: input.rating,
             comment: input.comment,
             watched_at: input.watchedAt,
+            motm_player_id: motmPlayerId,
           })
           .eq("id", customLogId);
         if (error) throw error;
@@ -60,6 +69,7 @@ export function useSaveCustomLog() {
             rating: input.rating,
             comment: input.comment,
             watched_at: input.watchedAt,
+            motm_player_id: motmPlayerId,
           })
           .select("id")
           .single();
@@ -72,6 +82,7 @@ export function useSaveCustomLog() {
           custom_log_id: customLogId,
           name: match.name,
           kickoff_at: match.kickoffAt,
+          match_id: match.matchId ?? null,
           position: index,
         })),
       );

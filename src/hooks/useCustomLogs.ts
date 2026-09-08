@@ -7,6 +7,9 @@ export interface CustomMatchItem {
   name: string;
   kickoffAt: string | null;
   position: number;
+  /** Renseigné quand ce match vient du référentiel (multiplex nouvelle
+   * formule) — null pour un match personnalisé saisi librement. */
+  matchId: string | null;
 }
 
 export interface CustomLogItem {
@@ -16,6 +19,8 @@ export interface CustomLogItem {
   watchedAt: string;
   createdAt: string;
   matches: CustomMatchItem[];
+  motmPlayerId: string | null;
+  motmName: string | null;
 }
 
 interface RawCustomLogRow {
@@ -24,11 +29,14 @@ interface RawCustomLogRow {
   comment: string | null;
   watched_at: string;
   created_at: string;
+  motm_player_id: string | null;
+  motm: { full_name: string } | null;
   custom_matches: {
     id: string;
     name: string;
     kickoff_at: string | null;
     position: number;
+    match_id: string | null;
   }[];
 }
 
@@ -45,7 +53,9 @@ export function useCustomLogs() {
     queryFn: async (): Promise<CustomLogItem[]> => {
       const { data, error } = await supabase
         .from("custom_logs")
-        .select("id, rating, comment, watched_at, created_at, custom_matches(id, name, kickoff_at, position)")
+        .select(
+          "id, rating, comment, watched_at, created_at, motm_player_id, motm:players(full_name), custom_matches(id, name, kickoff_at, position, match_id)",
+        )
         .eq("user_id", user!.id)
         .order("watched_at", { ascending: false });
       if (error) throw error;
@@ -58,6 +68,8 @@ export function useCustomLogs() {
           comment: r.comment,
           watchedAt: r.watched_at,
           createdAt: r.created_at,
+          motmPlayerId: r.motm_player_id,
+          motmName: r.motm?.full_name ?? null,
           matches: [...r.custom_matches]
             .sort((a, b) => a.position - b.position)
             .map((m) => ({
@@ -65,6 +77,7 @@ export function useCustomLogs() {
               name: m.name,
               kickoffAt: m.kickoff_at,
               position: m.position,
+              matchId: m.match_id,
             })),
         };
       });
