@@ -15,6 +15,19 @@
   --color-gris-fonce: #4a5450;
   --color-carton: #ff5c4d;
 
+  /* Palette catégorielle pour les graphiques de répartition (camembert/barre
+   * empilée) — ordre fixe, validé par le script de la skill dataviz sur la
+   * surface --color-nuit (#101316) : CVD Δe worst-adjacent 8.4, normal-vision
+   * worst-adjacent 19.3, contraste ≥ 3:1 partout. Ne jamais réordonner ni
+   * réutiliser ces teintes pour autre chose (l'ordre est le mécanisme de
+   * distinction sous daltonisme). */
+  --color-chart-1: #3987e5;
+  --color-chart-2: #d95926;
+  --color-chart-3: #199e70;
+  --color-chart-4: #c98500;
+  --color-chart-5: #d55181;
+  --color-chart-6: #008300;
+
   /* ---- Polices ---- */
   --font-display: "Archivo", system-ui, sans-serif;
   --font-body: "Instrument Sans", system-ui, sans-serif;

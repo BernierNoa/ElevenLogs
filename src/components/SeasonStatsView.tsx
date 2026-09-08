@@ -10,6 +10,7 @@ import { RatingTrendChart } from "./RatingTrendChart";
 import { ScorelineBadges } from "./ScorelineBadges";
 import { MetricRankedList } from "./MetricRankedList";
 import { ContinentBreakdownChart } from "./ContinentBreakdownChart";
+import { PartToWholeBar } from "./PartToWholeBar";
 import { StatTile } from "./StatTile";
 import { StatTileTrend } from "./StatTileTrend";
 import { useSeasonStats, type LoggedMatch, type RankedItem } from "../hooks/useSeasonStats";
@@ -412,6 +413,13 @@ export function SeasonStatsView({ stats, logOwnerId, readOnly = false, streak }:
 
       {category === "competitions" && (
         <div className="grid lg:grid-cols-2 gap-6 mt-7">
+          <div className="lg:col-span-2">
+            <SectionTitle>Répartition par compétition</SectionTitle>
+            <Card>
+              <PartToWholeBar items={stats.competitionsByCount} unitLabel="match" />
+            </Card>
+          </div>
+
           <div className="lg:col-span-2">
             <SectionTitle>Par compétition</SectionTitle>
             <Card>

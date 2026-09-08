@@ -21,6 +21,11 @@ export function MetricRankedList({ items, emptyLabel, communityAverages }: Metri
     return <p className="text-gris-fonce text-[13px]">{emptyLabel}</p>;
   }
 
+  const max = Math.max(...items.map((i) => i.count));
+  // Cf. RankedBarList : une barre à 100% partout ne représente rien si tous
+  // les comptes sont égaux (aucun vrai classement à montrer).
+  const hasVariance = items.some((i) => i.count !== items[0].count);
+
   return (
     <div>
       {items.map((item, index) => {
@@ -38,6 +43,14 @@ export function MetricRankedList({ items, emptyLabel, communityAverages }: Metri
               <div className="font-data text-[10px] text-gris-fonce mt-0.5">
                 {item.count} match{item.count > 1 ? "s" : ""} vu{item.count > 1 ? "s" : ""}
               </div>
+              {hasVariance && (
+                <div className="h-[3px] bg-nuit-haute rounded-full mt-1.5 overflow-hidden">
+                  <div
+                    className="h-full rounded-full bg-pelouse"
+                    style={{ width: `${max > 0 ? (item.count / max) * 100 : 0}%` }}
+                  />
+                </div>
+              )}
             </div>
             <div className="flex flex-col items-end gap-1 shrink-0">
               <span className="w-16">
