@@ -34,6 +34,7 @@ Renseigne les variables dans `.env` :
 | `VITE_SUPABASE_ANON_KEY` | Clé publique (anon) de ton projet Supabase |
 | `VITE_CLERK_PUBLISHABLE_KEY` | Clé publique de ton application Clerk |
 | `VITE_VAPID_PUBLIC_KEY` | Clé publique VAPID pour les notifications push web |
+| `VITE_ADMIN_USER_ID` | Identifiant Clerk (`sub`) du compte admin, pour l'affichage conditionnel de la page `/admin` |
 
 Puis lance le serveur de développement :
 

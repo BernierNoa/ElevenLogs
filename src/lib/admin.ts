@@ -3,4 +3,4 @@
 // sécurité est la policy RLS posée côté base de données sur les tables
 // concernées, qui vérifie ce même identifiant indépendamment de ce que
 // fait ou contourne le client.
-export const ADMIN_USER_ID = "user_3GrTXfGTTQd0mWVcpmaXZAPLYXO";
+export const ADMIN_USER_ID = import.meta.env.VITE_ADMIN_USER_ID as string;
