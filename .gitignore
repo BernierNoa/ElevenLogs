@@ -3,10 +3,6 @@ dist
 dist-ssr
 *.local
 
-# Supabase CLI (état local, jamais partagé)
-supabase/.branches
-supabase/.temp
-
 .env
 .env.*
 !.env.example
