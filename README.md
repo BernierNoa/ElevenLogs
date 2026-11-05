@@ -19,10 +19,10 @@ Ce dépôt contient uniquement le frontend. La configuration Supabase (migration
 
 ## Lancer le projet en local
 
-Prérequis : Node.js 20+, un projet Supabase existant et une application Clerk.
+Prérequis : Node.js compatible avec les dépendances verrouillées (par exemple 22.13+ dans la branche 22, ou 24+), un projet Supabase existant et une application Clerk.
 
 ```bash
-npm install
+npm ci
 cp .env.example .env
 ```
 
